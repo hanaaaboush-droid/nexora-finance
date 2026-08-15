@@ -36,12 +36,30 @@ app.get("/api/market", async (req, res) => {
 
     try {
 
-        const [ratesResponse, goldResponse, silverResponse] =
-            await Promise.all([
-                fetch(RATES_API_URL),
-                fetch(GOLD_API_URL),
-                fetch(SILVER_API_URL)
-            ]);
+      const controller = new AbortController();
+
+const timeout = setTimeout(() => {
+    controller.abort();
+}, 15000);
+
+
+const [ratesResponse, goldResponse, silverResponse] =
+    await Promise.all([
+        fetch(RATES_API_URL, {
+            signal: controller.signal
+        }),
+
+        fetch(GOLD_API_URL, {
+            signal: controller.signal
+        }),
+
+        fetch(SILVER_API_URL, {
+            signal: controller.signal
+        })
+    ]);
+
+
+clearTimeout(timeout);
 
 
         const ratesData = await ratesResponse.json();
