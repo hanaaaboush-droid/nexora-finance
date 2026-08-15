@@ -1,13 +1,18 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 
-const PORT = 3000;
+// استخدام البورت المعين من Render أو البورت 3000 للمحلي
+const PORT = process.env.PORT || 3000;
 
+// عرض الملفات الثابتة (index.html, script.js, style.css) الموجودة في نفس المجلد
+app.use(express.static(__dirname));
 
-// عرض ملفات الموقع
-app.use(express.static("../"));
-
+// توجيه الرابط الرئيسي / لعرض ملف index.html
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // =========================
 // API LINKS
@@ -142,9 +147,5 @@ app.get("/api/market", async (req, res) => {
 // =========================
 
 app.listen(PORT, () => {
-
-    console.log(
-        `Server is running on http://localhost:${PORT}`
-    );
-
+    console.log(`Server is running on port ${PORT}`);
 });
