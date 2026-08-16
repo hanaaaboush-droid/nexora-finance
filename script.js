@@ -1,20 +1,63 @@
+let isLoading = false;
+let hasLoadedOnce = false;
+
+
+// =========================
+// GET MARKET DATA
+// =========================
+
 async function getMarketData() {
 
-    // إظهار حالة التحميل
-    document.body.classList.add("loading");
+    // منع طلبين بنفس الوقت
+    if (isLoading) {
+        return;
+    }
+
+    isLoading = true;
+
+    const updateTime = document.getElementById("updateTime");
+
+
+    // =========================
+    // LOADING MESSAGE
+    // =========================
+
+    if (!hasLoadedOnce) {
+
+        updateTime.textContent =
+            "جاري الاتصال بالخادم وتحديث الأسعار...";
+
+    } else {
+
+        updateTime.textContent =
+            "جاري تحديث الأسعار...";
+
+    }
 
 
     try {
 
-     const response = await fetch("/api/market");
+        const response = await fetch(
+            "/api/market",
+            {
+                cache: "no-store"
+            }
+        );
 
 
         if (!response.ok) {
-            throw new Error("Server error");
+            throw new Error(
+                `Server error: ${response.status}`
+            );
         }
 
 
         const data = await response.json();
+
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
 
 
         // =========================
@@ -54,78 +97,121 @@ async function getMarketData() {
         // GOLD 24K
         // =========================
 
-        if (data.GOLD && data.GOLD["24K"] !== undefined) {
-
-            document.getElementById("gold24Price").textContent =
-                Number(data.GOLD["24K"]).toLocaleString("en-US", {
-                    maximumFractionDigits: 0
-                });
-
-        }
+        document.getElementById("gold24Price").textContent =
+            Number(data.GOLD["24K"]).toLocaleString("en-US", {
+                maximumFractionDigits: 0
+            });
 
 
         // =========================
         // GOLD 21K
         // =========================
 
-        if (data.GOLD && data.GOLD["21K"] !== undefined) {
-
-            document.getElementById("gold21Price").textContent =
-                Number(data.GOLD["21K"]).toLocaleString("en-US", {
-                    maximumFractionDigits: 0
-                });
-
-        }
+        document.getElementById("gold21Price").textContent =
+            Number(data.GOLD["21K"]).toLocaleString("en-US", {
+                maximumFractionDigits: 0
+            });
 
 
         // =========================
         // SILVER
         // =========================
 
-        if (data.SILVER !== undefined) {
+        document.getElementById("silverPrice").textContent =
+            Number(data.SILVER).toLocaleString("en-US", {
+                maximumFractionDigits: 0
+            });
 
-            document.getElementById("silverPrice").textContent =
-                Number(data.SILVER).toLocaleString("en-US", {
-                    maximumFractionDigits: 0
+
+        // =========================
+        // LAST UPDATE
+        // =========================
+
+        if (data.updatedAt) {
+
+            const date = new Date(data.updatedAt);
+
+            updateTime.textContent =
+                date.toLocaleTimeString("ar-SA", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
                 });
+
+        } else {
+
+            updateTime.textContent =
+                "غير متوفر";
 
         }
 
 
-        // =========================
-        // UPDATE TIME
-        // =========================
+        hasLoadedOnce = true;
 
-        document.getElementById("updateTime").textContent =
-            new Date().toLocaleTimeString("ar-SA");
-
-
-        console.log("تم تحديث الأسعار بنجاح");
+        console.log("✅ تم تحديث الأسعار بنجاح");
 
 
     } catch (error) {
 
-        console.error("خطأ في تحميل الأسعار:", error);
+        console.error(
+            "❌ خطأ في تحديث الأسعار:",
+            error
+        );
 
 
-        // رسالة للمستخدم
-        document.getElementById("updateTime").textContent =
-            "تعذر تحديث الأسعار";
+        // =========================
+        // IMPORTANT:
+        // لا نمسح الأسعار الموجودة
+        // =========================
 
+        if (!hasLoadedOnce) {
+
+            updateTime.textContent =
+                "⏳ الخادم يستغرق وقتًا للبدء... سنحاول مجددًا";
+
+        } else {
+
+            updateTime.textContent =
+                "تعذر التحديث مؤقتًا — الأسعار السابقة ما زالت معروضة";
+
+        }
 
     } finally {
 
-        // انتهاء حالة التحميل
-        document.body.classList.remove("loading");
+        isLoading = false;
 
     }
 
 }
 
 
-// تشغيل الأسعار عند فتح الموقع
+// =========================
+// FIRST LOAD
+// =========================
+
 getMarketData();
 
 
-// تحديث الأسعار كل دقيقة
-setInterval(getMarketData, 60000);
+// =========================
+// RETRY AFTER 10 SECONDS
+// =========================
+
+// مفيد جدًا إذا كان Render نائمًا
+setTimeout(() => {
+
+    if (!hasLoadedOnce) {
+        getMarketData();
+    }
+
+}, 10000);
+
+
+// =========================
+// UPDATE EVERY 60 SECONDS
+// =========================
+
+setInterval(() => {
+
+    getMarketData();
+
+}, 60000);
