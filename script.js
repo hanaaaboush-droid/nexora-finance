@@ -7,7 +7,8 @@ async function getMarketData() {
 
     try {
 
-        const response = await fetch("/api/market");
+        // أضيفي وقت اللحظة الحالية لنهاية الرابط لمنع المتصفح من تخزين الأسعار القديمة
+        const response = await fetch("/api/market?t=" + new Date().getTime());
 
         if (!response.ok) {
             throw new Error("فشل الاتصال بالخادم");
@@ -68,9 +69,6 @@ async function getMarketData() {
             formatNumber(data.SILVER);
 
         // =========================
-        // LAST UPDATE
-        // =========================
-      // =========================
         // LAST UPDATE
         // =========================
         const now = new Date();
