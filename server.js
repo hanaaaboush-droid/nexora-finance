@@ -87,10 +87,16 @@ app.get("/api/market", async (req, res) => {
 
         const goldData = await goldResponse.json();
 
+let gold24SYP = null;
+let gold21SYP = null;
 
-        // =========================
-        // GOLD
-        // =========================
+try {
+
+    const goldResponse = await fetch(GOLD_API_URL);
+
+    if (goldResponse.ok) {
+
+        const goldData = await goldResponse.json();
 
         const gold24 = goldData.data.find(
             gold => gold.type === "24K"
@@ -100,20 +106,32 @@ app.get("/api/market", async (req, res) => {
             gold => gold.type === "21K"
         );
 
-
-        if (!gold24 || !gold21) {
-            throw new Error(
-                "Gold 24K or 21K data is missing"
-            );
+        if (gold24) {
+            gold24SYP =
+                gold24.priceUSD * usd.sell;
         }
 
+        if (gold21) {
+            gold21SYP =
+                gold21.priceUSD * usd.sell;
+        }
 
-        const gold24SYP =
-            gold24.priceUSD * usd.sell;
+    } else {
 
-        const gold21SYP =
-            gold21.priceUSD * usd.sell;
+        console.log(
+            `Gold API unavailable: ${goldResponse.status}`
+        );
 
+    }
+
+} catch (goldError) {
+
+    console.log(
+        "Gold API temporarily unavailable:",
+        goldError.message
+    );
+
+}
 
         // =========================
         // GET SILVER
