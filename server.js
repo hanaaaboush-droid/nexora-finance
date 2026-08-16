@@ -35,31 +35,12 @@ const SILVER_API_URL =
 app.get("/api/market", async (req, res) => {
 
     try {
-
-      const controller = new AbortController();
-
-const timeout = setTimeout(() => {
-    controller.abort();
-}, 15000);
-
-
 const [ratesResponse, goldResponse, silverResponse] =
     await Promise.all([
-        fetch(RATES_API_URL, {
-            signal: controller.signal
-        }),
-
-        fetch(GOLD_API_URL, {
-            signal: controller.signal
-        }),
-
-        fetch(SILVER_API_URL, {
-            signal: controller.signal
-        })
+        fetch(RATES_API_URL),
+        fetch(GOLD_API_URL),
+        fetch(SILVER_API_URL)
     ]);
-
-
-clearTimeout(timeout);
 
 
         const ratesData = await ratesResponse.json();
