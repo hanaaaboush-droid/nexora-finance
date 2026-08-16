@@ -1,64 +1,19 @@
-let isLoading = false;
-let hasLoadedOnce = false;
-
-
-// =========================
-// GET MARKET DATA
-// =========================
-
 async function getMarketData() {
-
-    // منع طلبين بنفس الوقت
-    if (isLoading) {
-        return;
-    }
-
-    isLoading = true;
 
     const updateTime = document.getElementById("updateTime");
 
-
-    // =========================
-    // LOADING MESSAGE
-    // =========================
-
-    if (!hasLoadedOnce) {
-
-        updateTime.textContent =
-            "جاري الاتصال بالخادم وتحديث الأسعار...";
-
-    } else {
-
-        updateTime.textContent =
-            "جاري تحديث الأسعار...";
-
-    }
-
+    // إظهار حالة التحميل
+    updateTime.textContent = "جاري تحديث الأسعار...";
 
     try {
 
-        const response = await fetch(
-            "/api/market",
-            {
-                cache: "no-store"
-            }
-        );
-
+        const response = await fetch("/api/market");
 
         if (!response.ok) {
-            throw new Error(
-                `Server error: ${response.status}`
-            );
+            throw new Error("فشل الاتصال بالخادم");
         }
-
 
         const data = await response.json();
-
-
-        if (data.error) {
-            throw new Error(data.error);
-        }
-
 
         // =========================
         // USD
@@ -140,45 +95,20 @@ async function getMarketData() {
 
         } else {
 
-            updateTime.textContent =
-                "غير متوفر";
+            updateTime.textContent = "غير متوفر";
 
         }
 
 
-        hasLoadedOnce = true;
-
-        console.log("✅ تم تحديث الأسعار بنجاح");
+        console.log("تم تحديث الأسعار بنجاح");
 
 
     } catch (error) {
 
-        console.error(
-            "❌ خطأ في تحديث الأسعار:",
-            error
-        );
+        console.error("خطأ:", error);
 
-
-        // =========================
-        // IMPORTANT:
-        // لا نمسح الأسعار الموجودة
-        // =========================
-
-        if (!hasLoadedOnce) {
-
-            updateTime.textContent =
-                "⏳ الخادم يستغرق وقتًا للبدء... سنحاول مجددًا";
-
-        } else {
-
-            updateTime.textContent =
-                "تعذر التحديث مؤقتًا — الأسعار السابقة ما زالت معروضة";
-
-        }
-
-    } finally {
-
-        isLoading = false;
+        updateTime.textContent =
+            "تعذر تحديث الأسعار";
 
     }
 
@@ -186,32 +116,14 @@ async function getMarketData() {
 
 
 // =========================
-// FIRST LOAD
+// INITIAL LOAD
 // =========================
 
 getMarketData();
 
 
 // =========================
-// RETRY AFTER 10 SECONDS
+// UPDATE EVERY MINUTE
 // =========================
 
-// مفيد جدًا إذا كان Render نائمًا
-setTimeout(() => {
-
-    if (!hasLoadedOnce) {
-        getMarketData();
-    }
-
-}, 10000);
-
-
-// =========================
-// UPDATE EVERY 60 SECONDS
-// =========================
-
-setInterval(() => {
-
-    getMarketData();
-
-}, 60000);
+setInterval(getMarketData, 60000);
