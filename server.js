@@ -24,6 +24,9 @@ const SILVER_API_URL = "https://api.gold-api.com/price/XAG"; // Silver Ounce USD
 // MARKET API
 // =========================
 app.get("/api/market", async (req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     try {
         // -------------------------
         // 1. CURRENCIES
