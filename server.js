@@ -186,11 +186,10 @@ app.get("/api/market", async (req, res) => {
             "MARKET ERROR:",
             error.message
         );
-
-        res.status(500).json({
-            error: "Failed to get market data"
-        });
-
+res.status(500).json({
+    error: "Failed to get market data",
+    details: error.message
+});
     }
 
 });
