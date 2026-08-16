@@ -70,20 +70,16 @@ async function getMarketData() {
         // =========================
         // LAST UPDATE
         // =========================
-        if (data.updatedAt) {
-            const date = new Date(data.updatedAt);
-            updateTime.textContent = date.toLocaleTimeString("ar-SA", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            });
-        } else {
-            updateTime.textContent = new Date().toLocaleTimeString("ar-SA", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            });
-        }
+      // =========================
+        // LAST UPDATE
+        // =========================
+        const now = new Date();
+        updateTime.textContent = now.toLocaleTimeString("ar-SY", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        });
 
         console.log("تم تحديث الأسعار بنجاح");
 
