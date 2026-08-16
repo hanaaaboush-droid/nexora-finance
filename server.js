@@ -5,6 +5,11 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
+
+// =========================
+// WEBSITE
+// =========================
+
 app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
@@ -16,12 +21,15 @@ app.get("/", (req, res) => {
 // API LINKS
 // =========================
 
+// العملات - LiraNews
 const RATES_API_URL =
-    "https://lirascope.syria-cloud.sy/api/v1/rates/latest?currencies=USD,EUR,TRY&lang=ar";
+    "https://liranews.info/api/public/v1/price/usdsypd,eursyp,trysypd";
 
+// الذهب - LiraScope
 const GOLD_API_URL =
     "https://lirascope.syria-cloud.sy/api/v1/gold/latest?lang=ar";
 
+// الفضة
 const SILVER_API_URL =
     "https://api.gold-api.com/price/XAG";
 
@@ -34,17 +42,40 @@ app.get("/api/market", async (req, res) => {
 
     try {
 
-        // جلب كل API بشكل مستقل
+        // =========================
+        // GET CURRENCIES
+        // =========================
+
         const ratesResponse = await fetch(RATES_API_URL);
 
         if (!ratesResponse.ok) {
             throw new Error(
-                `Rates API error: ${ratesResponse.status}`
+                `Currency API error: ${ratesResponse.status}`
             );
         }
 
         const ratesData = await ratesResponse.json();
 
+
+        // =========================
+        // CURRENCIES
+        // =========================
+
+        const usd = ratesData.usdsypd;
+        const eur = ratesData.eursyp;
+        const tryRate = ratesData.trysypd;
+
+
+        if (!usd || !eur || !tryRate) {
+            throw new Error(
+                "Currency data is missing"
+            );
+        }
+
+
+        // =========================
+        // GET GOLD
+        // =========================
 
         const goldResponse = await fetch(GOLD_API_URL);
 
@@ -55,43 +86,6 @@ app.get("/api/market", async (req, res) => {
         }
 
         const goldData = await goldResponse.json();
-
-
-        const silverResponse = await fetch(SILVER_API_URL);
-
-        if (!silverResponse.ok) {
-            throw new Error(
-                `Silver API error: ${silverResponse.status}`
-            );
-        }
-
-        const silverData = await silverResponse.json();
-
-
-        // =========================
-        // CURRENCIES
-        // =========================
-
-        const rates = ratesData.marketRates;
-
-        const usd = rates.find(
-            rate => rate.currency === "USD"
-        );
-
-        const eur = rates.find(
-            rate => rate.currency === "EUR"
-        );
-
-        const tryRate = rates.find(
-            rate => rate.currency === "TRY"
-        );
-
-
-        if (!usd || !eur || !tryRate) {
-            throw new Error(
-                "USD / EUR / TRY data not found"
-            );
-        }
 
 
         // =========================
@@ -109,7 +103,7 @@ app.get("/api/market", async (req, res) => {
 
         if (!gold24 || !gold21) {
             throw new Error(
-                "24K / 21K gold data not found"
+                "Gold 24K or 21K data is missing"
             );
         }
 
@@ -119,6 +113,21 @@ app.get("/api/market", async (req, res) => {
 
         const gold21SYP =
             gold21.priceUSD * usd.sell;
+
+
+        // =========================
+        // GET SILVER
+        // =========================
+
+        const silverResponse = await fetch(SILVER_API_URL);
+
+        if (!silverResponse.ok) {
+            throw new Error(
+                `Silver API error: ${silverResponse.status}`
+            );
+        }
+
+        const silverData = await silverResponse.json();
 
 
         // =========================
@@ -132,7 +141,15 @@ app.get("/api/market", async (req, res) => {
 
 
         // =========================
-        // SEND DATA
+        // LAST UPDATE
+        // =========================
+
+        const updateTime =
+            usd.price_updated_at;
+
+
+        // =========================
+        // SEND DATA TO WEBSITE
         // =========================
 
         res.json({
@@ -159,7 +176,7 @@ app.get("/api/market", async (req, res) => {
 
             SILVER: silverSYP,
 
-            updatedAt: new Date().toISOString()
+            updatedAt: updateTime
 
         });
 
@@ -171,7 +188,7 @@ app.get("/api/market", async (req, res) => {
         );
 
         res.status(500).json({
-            error: error.message
+            error: "Failed to get market data"
         });
 
     }
