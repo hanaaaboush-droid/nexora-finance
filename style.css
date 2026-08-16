@@ -13,9 +13,9 @@ html {
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f8;
-    color: #172033;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0b0f19; /* خلفية داكنة فخمة */
+    color: #f1f5f9;
     line-height: 1.6;
 }
 
@@ -35,8 +35,9 @@ button {
 
 .navbar {
     min-height: 80px;
-
-    background-color: #101827;
+    background-color: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
     color: white;
 
     display: flex;
@@ -44,12 +45,10 @@ button {
     justify-content: space-between;
 
     padding: 15px 7%;
-
     gap: 30px;
 
     position: sticky;
     top: 0;
-
     z-index: 1000;
 }
 
@@ -59,16 +58,16 @@ button {
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .logo-icon {
     width: 46px;
     height: 46px;
-
-    border: 2px solid #c9a45c;
-
-    color: #c9a45c;
+    border: 2px solid #d4af37;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent);
+    border-radius: 8px;
+    color: #f3e5ab;
 
     display: flex;
     align-items: center;
@@ -76,19 +75,20 @@ button {
 
     font-size: 22px;
     font-weight: bold;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
 .logo h1 {
     font-size: 20px;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
+    color: #ffffff;
 }
 
 .logo p {
-    color: #c9a45c;
-
+    color: #d4af37;
     font-size: 9px;
-
     letter-spacing: 3px;
+    font-weight: 600;
 }
 
 
@@ -97,21 +97,20 @@ button {
 nav {
     display: flex;
     align-items: center;
-
-    gap: 25px;
+    gap: 30px;
 }
 
 nav a {
-    color: #dce2eb;
-
+    color: #94a3b8;
     font-size: 14px;
-
-    transition: 0.3s;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 nav a:hover,
 nav a.active {
-    color: #c9a45c;
+    color: #d4af37;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 }
 
 
@@ -119,23 +118,19 @@ nav a.active {
 
 #languageBtn {
     background-color: transparent;
-
-    border: 1px solid #c9a45c;
-
-    color: #c9a45c;
-
-    padding: 8px 16px;
-
-    border-radius: 5px;
-
+    border: 1px solid #d4af37;
+    color: #d4af37;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
-
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 #languageBtn:hover {
-    background-color: #c9a45c;
-    color: #101827;
+    background: linear-gradient(135deg, #d4af37, #aa7c11);
+    color: #0f172a;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
 }
 
 
@@ -144,18 +139,16 @@ nav a.active {
 ========================= */
 
 .hero {
-    min-height: 360px;
-
-    background:
-        linear-gradient(
-            rgba(16, 24, 39, 0.94),
-            rgba(16, 24, 39, 0.94)
-        );
+    min-height: 380px;
+    background: 
+        radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 50%),
+        #0b0f19;
 
     display: flex;
     align-items: center;
-
     padding: 70px 7%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .hero-content {
@@ -163,26 +156,26 @@ nav a.active {
 }
 
 .small-title {
-    color: #c9a45c;
-
+    color: #d4af37;
     font-size: 13px;
-
     letter-spacing: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .hero h2 {
-    color: white;
-
-    font-size: 55px;
-
+    color: #ffffff;
+    font-size: 52px;
+    font-weight: 800;
     margin: 15px 0;
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .hero p {
-    color: #aeb8c8;
-
+    color: #94a3b8;
     font-size: 18px;
-
     max-width: 600px;
 }
 
@@ -193,35 +186,41 @@ nav a.active {
 
 .prices-section {
     padding: 70px 7%;
+    background-color: #0b0f19;
 }
 
 .section-heading {
     display: flex;
-
     justify-content: space-between;
-    align-items: end;
-
-    margin-bottom: 35px;
+    align-items: flex-end;
+    margin-bottom: 40px;
 }
 
 .section-heading span {
-    color: #b08b45;
-
+    color: #d4af37;
     font-size: 12px;
-
     letter-spacing: 2px;
+    font-weight: 700;
 }
 
 .section-heading h2 {
     font-size: 32px;
-
+    color: #ffffff;
     margin-top: 5px;
 }
 
 .update-time {
-    color: #7b8494;
-
+    color: #64748b;
     font-size: 13px;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.update-time span {
+    color: #38bdf8;
+    font-weight: 600;
 }
 
 
@@ -234,19 +233,18 @@ nav a.active {
 }
 
 .category-title {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .category-title h3 {
-    font-size: 23px;
-
-    margin-bottom: 3px;
+    font-size: 24px;
+    color: #f8fafc;
+    margin-bottom: 5px;
 }
 
 .category-title p {
-    color: #7b8494;
-
-    font-size: 13px;
+    color: #64748b;
+    font-size: 14px;
 }
 
 
@@ -256,10 +254,8 @@ nav a.active {
 
 .price-grid {
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
-    gap: 20px;
+    gap: 25px;
 }
 
 
@@ -268,33 +264,22 @@ nav a.active {
 ========================= */
 
 .price-card {
-    background-color: white;
-
-    border: 1px solid #e1e6ec;
-
-    border-radius: 12px;
-
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
     padding: 25px;
-
     display: flex;
-
     align-items: center;
-
-    gap: 15px;
-
-    box-shadow:
-        0 8px 25px
-        rgba(20, 30, 50, 0.05);
-
-    transition: 0.3s;
+    gap: 18px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .price-card:hover {
-    transform: translateY(-5px);
-
-    box-shadow:
-        0 15px 35px
-        rgba(20, 30, 50, 0.10);
+    transform: translateY(-6px);
+    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(15, 23, 42, 0.9);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1);
 }
 
 
@@ -303,22 +288,17 @@ nav a.active {
 .currency-icon {
     width: 55px;
     height: 55px;
-
     flex-shrink: 0;
-
-    border-radius: 10px;
-
-    background-color: #eef2f7;
-
-    color: #172033;
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #38bdf8;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     font-size: 24px;
-
     font-weight: bold;
 }
 
@@ -326,18 +306,18 @@ nav a.active {
 /* Gold Icon */
 
 .currency-icon.gold {
-    background-color: #fbf4e5;
-
-    color: #b08b45;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(15, 23, 42, 0.8));
+    border-color: rgba(212, 175, 55, 0.3);
+    color: #f3e5ab;
 }
 
 
 /* Silver Icon */
 
 .currency-icon.silver {
-    background-color: #eef0f2;
-
-    color: #69717d;
+    background: linear-gradient(135deg, rgba(203, 213, 225, 0.15), rgba(15, 23, 42, 0.8));
+    border-color: rgba(203, 213, 225, 0.3);
+    color: #e2e8f0;
 }
 
 
@@ -348,212 +328,18 @@ nav a.active {
 }
 
 .price-info p {
-    color: #737d8d;
-
+    color: #94a3b8;
     font-size: 13px;
 }
 
 .price-info h3 {
-    font-size: 15px;
-}
-
-
-/* Price */
-
-.price-value {
-    text-align: left;
-}
-
-.price-value strong {
-    display: block;
-
-    font-size: 18px;
-
-    color: #172033;
-}
-
-.price-value span {
-    color: #7b8494;
-
-    font-size: 11px;
-}
-
-
-/* =========================
-   8. FOOTER
-========================= */
-
-.footer {
-    background-color: #101827;
-
-    color: white;
-
-    margin-top: 30px;
-}
-
-.footer-container {
-    padding: 55px 7%;
-
-    display: grid;
-
-    grid-template-columns: 2fr 1fr 1fr;
-
-    gap: 50px;
-}
-
-
-/* Footer Brand */
-
-.footer-brand h2 {
-    color: #c9a45c;
-
-    letter-spacing: 3px;
-}
-
-.footer-brand p {
-    color: #c9a45c;
-
-    font-size: 11px;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 10px;
-}
-
-.footer-brand span {
-    color: #8f9bad;
-
-    font-size: 13px;
-}
-
-
-/* Footer Titles */
-
-.footer h3 {
-    margin-bottom: 15px;
-
     font-size: 16px;
+    color: #ffffff;
+    font-weight: 700;
 }
 
 
-/* Footer Links */
-
-.footer-contact,
-.footer-links {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-}
-
-.footer a {
-    color: #9da8b8;
-
-    font-size: 13px;
-
-    transition: 0.3s;
-}
-
-.footer a:hover {
-    color: #c9a45c;
-}
-
-
-/* Copyright */
-
-.copyright {
-    border-top: 1px solid #283244;
-
-    padding: 20px 7%;
-
-    color: #717d90;
-
-    font-size: 12px;
-
-    text-align: center;
-}
-
-
-/* =========================
-   9. MOBILE
-========================= */
-
-@media (max-width: 900px) {
-
-    .navbar {
-        flex-wrap: wrap;
-    }
-
-    nav {
-        order: 3;
-
-        width: 100%;
-
-        justify-content: center;
-
-        flex-wrap: wrap;
-
-        gap: 15px;
-    }
-
-    .price-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .footer-container {
-        grid-template-columns: 1fr;
-
-        gap: 30px;
-    }
-
-    .hero h2 {
-        font-size: 40px;
-    }
-}
-
-
-@media (max-width: 500px) {
-
-    .navbar {
-        padding: 15px 5%;
-    }
-
-    .prices-section {
-        padding: 50px 5%;
-    }
-
-    .section-heading {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 10px;
-    }
-
-    .price-card {
-        padding: 18px;
-    }
-
-    .price-value strong {
-        font-size: 16px;
-    }
-
-    .hero {
-        padding: 60px 5%;
-    }
-
-    .hero h2 {
-        font-size: 34px;
-    }
-
-    .hero p {
-        font-size: 15px;
-    }
-}
-/* =========================
-   BUY & SELL PRICES
-========================= */
+/* Price Values */
 
 .price-value {
     display: flex;
@@ -570,17 +356,163 @@ nav a.active {
 }
 
 .price-value div span:first-child {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    opacity: 0.7;
+    color: #64748b;
 }
 
 .price-value strong {
     font-size: 18px;
     font-weight: 700;
+    color: #f8fafc;
 }
 
 .price-value div span:last-child {
     font-size: 11px;
-    opacity: 0.6;
+    color: #d4af37;
+    font-weight: 600;
+}
+
+
+/* =========================
+   8. FOOTER
+========================= */
+
+.footer {
+    background-color: #070a12;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: white;
+    margin-top: 50px;
+}
+
+.footer-container {
+    padding: 60px 7%;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 50px;
+}
+
+
+/* Footer Brand */
+
+.footer-brand h2 {
+    color: #d4af37;
+    letter-spacing: 2px;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.footer-brand span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* Footer Titles */
+
+.footer h3 {
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: #f8fafc;
+    letter-spacing: 1px;
+}
+
+
+/* Footer Links */
+
+.footer-contact,
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer a {
+    color: #94a3b8;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.footer a:hover {
+    color: #d4af37;
+    transform: translateX(-3px);
+}
+
+
+/* Copyright */
+
+.copyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 22px 7%;
+    color: #475569;
+    font-size: 12px;
+    text-align: center;
+}
+
+
+/* =========================
+   9. RESPONSIVE (MOBILE & TABLET)
+========================= */
+
+@media (max-width: 900px) {
+    .navbar {
+        flex-wrap: wrap;
+    }
+
+    nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .hero h2 {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 500px) {
+    .navbar {
+        padding: 15px 5%;
+    }
+
+    .prices-section {
+        padding: 50px 5%;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .price-card {
+        padding: 20px;
+    }
+
+    .price-value strong {
+        font-size: 16px;
+    }
+
+    .hero {
+        padding: 60px 5%;
+    }
+
+    .hero h2 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
 }
