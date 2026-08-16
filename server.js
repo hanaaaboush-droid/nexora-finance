@@ -3,16 +3,14 @@ const path = require("path");
 
 const app = express();
 
-// استخدام البورت المعين من Render أو البورت 3000 للمحلي
 const PORT = process.env.PORT || 3000;
 
-// عرض الملفات الثابتة (index.html, script.js, style.css) الموجودة في نفس المجلد
 app.use(express.static(__dirname));
 
-// توجيه الرابط الرئيسي / لعرض ملف index.html
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
+
 
 // =========================
 // API LINKS
@@ -35,16 +33,38 @@ const SILVER_API_URL =
 app.get("/api/market", async (req, res) => {
 
     try {
-const [ratesResponse, goldResponse, silverResponse] =
-    await Promise.all([
-        fetch(RATES_API_URL),
-        fetch(GOLD_API_URL),
-        fetch(SILVER_API_URL)
-    ]);
 
+        // جلب كل API بشكل مستقل
+        const ratesResponse = await fetch(RATES_API_URL);
+
+        if (!ratesResponse.ok) {
+            throw new Error(
+                `Rates API error: ${ratesResponse.status}`
+            );
+        }
 
         const ratesData = await ratesResponse.json();
+
+
+        const goldResponse = await fetch(GOLD_API_URL);
+
+        if (!goldResponse.ok) {
+            throw new Error(
+                `Gold API error: ${goldResponse.status}`
+            );
+        }
+
         const goldData = await goldResponse.json();
+
+
+        const silverResponse = await fetch(SILVER_API_URL);
+
+        if (!silverResponse.ok) {
+            throw new Error(
+                `Silver API error: ${silverResponse.status}`
+            );
+        }
+
         const silverData = await silverResponse.json();
 
 
@@ -67,6 +87,13 @@ const [ratesResponse, goldResponse, silverResponse] =
         );
 
 
+        if (!usd || !eur || !tryRate) {
+            throw new Error(
+                "USD / EUR / TRY data not found"
+            );
+        }
+
+
         // =========================
         // GOLD
         // =========================
@@ -78,6 +105,13 @@ const [ratesResponse, goldResponse, silverResponse] =
         const gold21 = goldData.data.find(
             gold => gold.type === "21K"
         );
+
+
+        if (!gold24 || !gold21) {
+            throw new Error(
+                "24K / 21K gold data not found"
+            );
+        }
 
 
         const gold24SYP =
@@ -92,7 +126,9 @@ const [ratesResponse, goldResponse, silverResponse] =
         // =========================
 
         const silverSYP =
-            silverData.price * usd.sell / 31.1034768;
+            silverData.price *
+            usd.sell /
+            31.1034768;
 
 
         // =========================
@@ -121,19 +157,21 @@ const [ratesResponse, goldResponse, silverResponse] =
                 "21K": gold21SYP
             },
 
-            SILVER: silverSYP
+            SILVER: silverSYP,
+
+            updatedAt: new Date().toISOString()
 
         });
 
     } catch (error) {
 
         console.error(
-            "حدث خطأ أثناء جلب بيانات السوق:",
-            error
+            "MARKET ERROR:",
+            error.message
         );
 
         res.status(500).json({
-            error: "Failed to get market data"
+            error: error.message
         });
 
     }
@@ -146,5 +184,9 @@ const [ratesResponse, goldResponse, silverResponse] =
 // =========================
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+    console.log(
+        `Server is running on port ${PORT}`
+    );
+
 });
