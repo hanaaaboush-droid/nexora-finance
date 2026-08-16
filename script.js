@@ -6,20 +6,7 @@ async function getMarketData() {
 
     try {
 
-        // نضع حدًا أقصى للانتظار: 15 ثانية
-        const controller = new AbortController();
-
-        const timeout = setTimeout(() => {
-            controller.abort();
-        }, 15000);
-
-
-        const response = await fetch("/api/market", {
-            signal: controller.signal
-        });
-
-
-        clearTimeout(timeout);
+     const response = await fetch("/api/market");
 
 
         if (!response.ok) {
