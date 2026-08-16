@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 const RATES_API_URL =
     "https://liranews.info/api/public/v1/price/usdsypd,eursyp,trysypd";
 
-// الذهب - LiraScope
+// الذهب
 const GOLD_API_URL =
     "https://lirascope.syria-cloud.sy/api/v1/gold/latest?lang=ar";
 
@@ -43,7 +43,7 @@ app.get("/api/market", async (req, res) => {
     try {
 
         // =========================
-        // GET CURRENCIES
+        // CURRENCIES
         // =========================
 
         const ratesResponse = await fetch(RATES_API_URL);
@@ -56,85 +56,70 @@ app.get("/api/market", async (req, res) => {
 
         const ratesData = await ratesResponse.json();
 
-
-        // =========================
-        // CURRENCIES
-        // =========================
-
         const usd = ratesData.usdsypd;
         const eur = ratesData.eursyp;
         const tryRate = ratesData.trysypd;
 
 
         if (!usd || !eur || !tryRate) {
-            throw new Error(
-                "Currency data is missing"
+            throw new Error("Currency data is missing");
+        }
+
+
+        // =========================
+        // GOLD
+        // =========================
+
+        let gold24SYP = null;
+        let gold21SYP = null;
+
+        try {
+
+            const goldResponse = await fetch(GOLD_API_URL);
+
+            if (goldResponse.ok) {
+
+                const goldData = await goldResponse.json();
+
+                const gold24 = goldData.data.find(
+                    gold => gold.type === "24K"
+                );
+
+                const gold21 = goldData.data.find(
+                    gold => gold.type === "21K"
+                );
+
+                if (gold24) {
+                    gold24SYP =
+                        gold24.priceUSD * usd.sell;
+                }
+
+                if (gold21) {
+                    gold21SYP =
+                        gold21.priceUSD * usd.sell;
+                }
+
+            } else {
+
+                console.log(
+                    "Gold API unavailable:",
+                    goldResponse.status
+                );
+
+            }
+
+        } catch (goldError) {
+
+            console.log(
+                "Gold API error:",
+                goldError.message
             );
+
         }
 
 
         // =========================
-        // GET GOLD
-        // =========================
-
-        const goldResponse = await fetch(GOLD_API_URL);
-
-        if (!goldResponse.ok) {
-            throw new Error(
-                `Gold API error: ${goldResponse.status}`
-            );
-        }
-
-        const goldData = await goldResponse.json();
-
-let gold24SYP = null;
-let gold21SYP = null;
-
-try {
-
-    const goldResponse = await fetch(GOLD_API_URL);
-
-    if (goldResponse.ok) {
-
-        const goldData = await goldResponse.json();
-
-        const gold24 = goldData.data.find(
-            gold => gold.type === "24K"
-        );
-
-        const gold21 = goldData.data.find(
-            gold => gold.type === "21K"
-        );
-
-        if (gold24) {
-            gold24SYP =
-                gold24.priceUSD * usd.sell;
-        }
-
-        if (gold21) {
-            gold21SYP =
-                gold21.priceUSD * usd.sell;
-        }
-
-    } else {
-
-        console.log(
-            `Gold API unavailable: ${goldResponse.status}`
-        );
-
-    }
-
-} catch (goldError) {
-
-    console.log(
-        "Gold API temporarily unavailable:",
-        goldError.message
-    );
-
-}
-
-        // =========================
-        // GET SILVER
+        // SILVER
         // =========================
 
         const silverResponse = await fetch(SILVER_API_URL);
@@ -147,11 +132,6 @@ try {
 
         const silverData = await silverResponse.json();
 
-
-        // =========================
-        // SILVER
-        // =========================
-
         const silverSYP =
             silverData.price *
             usd.sell /
@@ -159,15 +139,7 @@ try {
 
 
         // =========================
-        // LAST UPDATE
-        // =========================
-
-        const updateTime =
-            usd.price_updated_at;
-
-
-        // =========================
-        // SEND DATA TO WEBSITE
+        // SEND DATA
         // =========================
 
         res.json({
@@ -194,7 +166,7 @@ try {
 
             SILVER: silverSYP,
 
-            updatedAt: updateTime
+            updatedAt: usd.price_updated_at
 
         });
 
@@ -204,10 +176,12 @@ try {
             "MARKET ERROR:",
             error.message
         );
-res.status(500).json({
-    error: "Failed to get market data",
-    details: error.message
-});
+
+        res.status(500).json({
+            error: "Failed to get market data",
+            details: error.message
+        });
+
     }
 
 });
