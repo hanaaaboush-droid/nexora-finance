@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+
+
 /* =========================
    1. GENERAL SETTINGS
 ========================= */
@@ -13,8 +16,8 @@ html {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0b0f19; /* خلفية داكنة فخمة */
+    font-family: 'Cairo', sans-serif;
+    background-color: #0b0f19;
     color: #f1f5f9;
     line-height: 1.6;
 }
@@ -65,7 +68,11 @@ button {
     width: 46px;
     height: 46px;
     border: 2px solid #d4af37;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent);
+    background: linear-gradient(
+        135deg,
+        rgba(212, 175, 55, 0.2),
+        transparent
+    );
     border-radius: 8px;
     color: #f3e5ab;
 
@@ -128,7 +135,11 @@ nav a.active {
 }
 
 #languageBtn:hover {
-    background: linear-gradient(135deg, #d4af37, #aa7c11);
+    background: linear-gradient(
+        135deg,
+        #d4af37,
+        #aa7c11
+    );
     color: #0f172a;
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
 }
@@ -140,9 +151,17 @@ nav a.active {
 
 .hero {
     min-height: 380px;
-    background: 
-        radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 50%),
-        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 50%),
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(212, 175, 55, 0.08),
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at bottom left,
+            rgba(59, 130, 246, 0.08),
+            transparent 50%
+        ),
         #0b0f19;
 
     display: flex;
@@ -168,7 +187,13 @@ nav a.active {
     font-size: 52px;
     font-weight: 800;
     margin: 15px 0;
-    background: linear-gradient(to right, #ffffff, #94a3b8);
+
+    background: linear-gradient(
+        to right,
+        #ffffff,
+        #94a3b8
+    );
+
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -268,18 +293,31 @@ nav a.active {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 25px;
+
     display: flex;
     align-items: center;
     gap: 18px;
+
     backdrop-filter: blur(10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    transition: all 0.3s cubic-bezier(
+        0.4,
+        0,
+        0.2,
+        1
+    );
 }
 
 .price-card:hover {
     transform: translateY(-6px);
+
     border-color: rgba(212, 175, 55, 0.4);
+
     background: rgba(15, 23, 42, 0.9);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(212, 175, 55, 0.1);
 }
 
 
@@ -288,10 +326,15 @@ nav a.active {
 .currency-icon {
     width: 55px;
     height: 55px;
+
     flex-shrink: 0;
+
     border-radius: 12px;
+
     background: rgba(30, 41, 59, 0.8);
+
     border: 1px solid rgba(255, 255, 255, 0.05);
+
     color: #38bdf8;
 
     display: flex;
@@ -306,7 +349,12 @@ nav a.active {
 /* Gold Icon */
 
 .currency-icon.gold {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(15, 23, 42, 0.8));
+    background: linear-gradient(
+        135deg,
+        rgba(212, 175, 55, 0.15),
+        rgba(15, 23, 42, 0.8)
+    );
+
     border-color: rgba(212, 175, 55, 0.3);
     color: #f3e5ab;
 }
@@ -315,7 +363,12 @@ nav a.active {
 /* Silver Icon */
 
 .currency-icon.silver {
-    background: linear-gradient(135deg, rgba(203, 213, 225, 0.15), rgba(15, 23, 42, 0.8));
+    background: linear-gradient(
+        135deg,
+        rgba(203, 213, 225, 0.15),
+        rgba(15, 23, 42, 0.8)
+    );
+
     border-color: rgba(203, 213, 225, 0.3);
     color: #e2e8f0;
 }
@@ -387,8 +440,10 @@ nav a.active {
 
 .footer-container {
     padding: 60px 7%;
+
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
+
     gap: 50px;
 }
 
@@ -455,6 +510,7 @@ nav a.active {
 ========================= */
 
 @media (max-width: 900px) {
+
     .navbar {
         flex-wrap: wrap;
     }
@@ -481,7 +537,9 @@ nav a.active {
     }
 }
 
+
 @media (max-width: 500px) {
+
     .navbar {
         padding: 15px 5%;
     }
