@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>لوحة التحكم | Nixora</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         ADMIN NAVBAR
+    ========================== -->
+
+    <header class="admin-navbar">
+
+        <div class="admin-brand">
+
+            <div class="admin-logo">
+                N
+            </div>
+
+            <div>
+                <h1>Nixora</h1>
+                <span>ADMIN PANEL</span>
+            </div>
+
+        </div>
+
+
+        <div class="admin-user">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+            <div class="admin-user-info">
+                <strong>المسؤول</strong>
+                <span>مدير الأخبار</span>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         ADMIN LAYOUT
+    ========================== -->
+
+    <div class="admin-layout">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="admin-sidebar">
+
+            <nav class="admin-menu">
+
+                <a href="#" class="admin-menu-item active">
+                    <span>📰</span>
+                    الأخبار
+                </a>
+
+                <a href="#" class="admin-menu-item">
+                    <span>📊</span>
+                    الإحصائيات
+                </a>
+
+                <a href="#" class="admin-menu-item">
+                    <span>⚙️</span>
+                    الإعدادات
+                </a>
+
+            </nav>
+
+
+            <div class="admin-sidebar-bottom">
+
+                <a href="news.html" class="view-site">
+                    🌐 عرض الموقع
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="admin-main">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="admin-page-header">
+
+                <div>
+
+                    <span class="admin-section-label">
+                        NEWS MANAGEMENT
+                    </span>
+
+                    <h2>
+                        إدارة الأخبار
+                    </h2>
+
+                    <p>
+                        إضافة وتعديل وإدارة أخبار Nixora
+                    </p>
+
+                </div>
+
+
+                <button class="add-news-btn">
+                    <span>＋</span>
+                    إضافة خبر
+                </button>
+
+            </section>
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+
+            <section class="admin-stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📰
+                    </div>
+
+                    <div>
+                        <span>إجمالي الأخبار</span>
+                        <strong>24</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon breaking-icon">
+                        🚨
+                    </div>
+
+                    <div>
+                        <span>أخبار عاجلة</span>
+                        <strong>3</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon pinned-icon">
+                        📌
+                    </div>
+
+                    <div>
+                        <span>أخبار مثبتة</span>
+                        <strong>2</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🕐
+                    </div>
+
+                    <div>
+                        <span>منشورة اليوم</span>
+                        <strong>7</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 NEWS MANAGEMENT
+            ========================== -->
+
+            <section class="admin-news-section">
+
+
+                <!-- SECTION HEADER -->
+
+                <div class="admin-news-header">
+
+                    <div>
+
+                        <h3>
+                            الأخبار
+                        </h3>
+
+                        <span>
+                            آخر الأخبار المضافة
+                        </span>
+
+                    </div>
+
+
+                    <!-- SEARCH -->
+
+                    <div class="news-search">
+
+                        <span>🔍</span>
+
+                        <input
+                            type="text"
+                            placeholder="ابحث عن خبر..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     FILTERS
+                ========================== -->
+
+                <div class="news-filters">
+
+                    <button class="filter active">
+                        جميع الأخبار
+                    </button>
+
+                    <button class="filter">
+                        🚨 عاجل
+                    </button>
+
+                    <button class="filter">
+                        📌 مثبت
+                    </button>
+
+                    <button class="filter">
+                        📰 عام
+                    </button>
+
+                    <button class="filter">
+                        💰 اقتصادي
+                    </button>
+
+                </div>
+
+
+                <!-- =========================
+                     NEWS TABLE
+                ========================== -->
+
+                <div class="news-table-container">
+
+                    <table class="news-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    الخبر
+                                </th>
+
+                                <th>
+                                    التصنيف
+                                </th>
+
+                                <th>
+                                    الحالة
+                                </th>
+
+                                <th>
+                                    التاريخ
+                                </th>
+
+                                <th>
+                                    الإجراءات
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            <!-- NEWS ROW -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="admin-news-info">
+
+                                        <div class="admin-news-image">
+                                            📰
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                هذا مثال على خبر عاجل
+                                            </strong>
+
+                                            <span>
+                                                خبر تجريبي في Nixora
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="table-category breaking">
+                                        🚨 عاجل
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status published">
+                                        منشور
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    منذ ساعتين
+                                </td>
+
+
+                                <td>
+
+                                    <div class="table-actions">
+
+                                        <button
+                                            class="action-btn edit"
+                                            title="تعديل">
+                                            ✏️
+                                        </button>
+
+                                        <button
+                                            class="action-btn pin"
+                                            title="تثبيت">
+                                            📌
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            title="حذف">
+                                            🗑️
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- NEWS ROW -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="admin-news-info">
+
+                                        <div class="admin-news-image">
+                                            💰
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                ارتفاع أسعار الذهب اليوم
+                                            </strong>
+
+                                            <span>
+                                                تحديث جديد للأسواق
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="table-category economic">
+                                        💰 اقتصادي
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status published">
+                                        منشور
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    منذ 5 ساعات
+                                </td>
+
+
+                                <td>
+
+                                    <div class="table-actions">
+
+                                        <button
+                                            class="action-btn edit"
+                                            title="تعديل">
+                                            ✏️
+                                        </button>
+
+                                        <button
+                                            class="action-btn pin"
+                                            title="تثبيت">
+                                            📌
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            title="حذف">
+                                            🗑️
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="admin.js"></script>
+
+</body>
+
+</html>
