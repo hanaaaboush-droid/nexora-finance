@@ -1,0 +1,513 @@
+/* =========================
+   NIXORA NEWS PAGE
+========================= */
+
+
+/* =========================
+   1. CONTAINER
+========================= */
+
+.container {
+    width: 86%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   2. NEWS HERO
+========================= */
+
+.news-hero {
+    padding: 75px 0 60px;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(212, 175, 55, 0.08),
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at bottom left,
+            rgba(56, 189, 248, 0.06),
+            transparent 45%
+        ),
+        #0b0f19;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section-label {
+    color: #d4af37;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.news-hero h1 {
+    margin-top: 12px;
+    margin-bottom: 10px;
+
+    font-size: 48px;
+    font-weight: 800;
+    color: #ffffff;
+
+    background: linear-gradient(
+        to right,
+        #ffffff,
+        #94a3b8
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.news-hero p {
+    color: #94a3b8;
+    font-size: 17px;
+}
+
+
+/* =========================
+   3. NEWS CATEGORIES
+========================= */
+
+.news-categories {
+    padding: 25px 0;
+
+    background: rgba(15, 23, 42, 0.55);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    position: sticky;
+    top: 80px;
+    z-index: 900;
+
+    backdrop-filter: blur(12px);
+}
+
+.news-categories .container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.news-categories .container::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Category Button */
+
+.category {
+    flex-shrink: 0;
+
+    padding: 9px 18px;
+
+    background: rgba(15, 23, 42, 0.8);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 8px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.category:hover {
+    color: #ffffff;
+
+    border-color: rgba(212, 175, 55, 0.4);
+
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.category.active {
+    color: #0b0f19;
+
+    background: linear-gradient(
+        135deg,
+        #d4af37,
+        #aa7c11
+    );
+
+    border-color: #d4af37;
+
+    box-shadow:
+        0 0 15px rgba(212, 175, 55, 0.18);
+}
+
+
+/* =========================
+   4. NEWS SECTION
+========================= */
+
+.news-section {
+    padding: 60px 0 80px;
+
+    background-color: #0b0f19;
+}
+
+
+/* =========================
+   5. NEWS GRID
+========================= */
+
+.news-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 25px;
+}
+
+
+/* =========================
+   6. NEWS CARD
+========================= */
+
+.news-card {
+    position: relative;
+
+    overflow: hidden;
+
+    background: rgba(15, 23, 42, 0.7);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 16px;
+
+    backdrop-filter: blur(10px);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-6px);
+
+    border-color: rgba(212, 175, 55, 0.4);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(212, 175, 55, 0.08);
+}
+
+
+/* =========================
+   7. NEWS IMAGE
+========================= */
+
+.news-image {
+    width: 100%;
+    height: 210px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #1e293b
+        );
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.5s ease;
+}
+
+.news-card:hover .news-image img {
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   8. NEWS CONTENT
+========================= */
+
+.news-content {
+    padding: 22px;
+}
+
+
+/* =========================
+   9. NEWS META
+========================= */
+
+.news-meta {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+.news-category {
+    color: #d4af37;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.news-date {
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   10. NEWS TITLE
+========================= */
+
+.news-content h2 {
+    color: #f8fafc;
+
+    font-size: 19px;
+    font-weight: 700;
+
+    line-height: 1.5;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================
+   11. NEWS DESCRIPTION
+========================= */
+
+.news-content p {
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================
+   12. READ MORE
+========================= */
+
+.read-more {
+    display: inline-flex;
+
+    align-items: center;
+
+    color: #d4af37;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    color: #f3e5ab;
+
+    transform: translateX(-4px);
+}
+
+
+/* =========================
+   13. BREAKING NEWS
+========================= */
+
+.news-card.breaking {
+    border-color: rgba(239, 68, 68, 0.45);
+
+    box-shadow:
+        0 0 25px rgba(239, 68, 68, 0.08);
+}
+
+
+/* Breaking Label */
+
+.breaking-label {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 5;
+
+    padding: 6px 12px;
+
+    border-radius: 6px;
+
+    background: #dc2626;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+/* =========================
+   14. PINNED NEWS
+========================= */
+
+.news-card.pinned {
+    border-color: rgba(212, 175, 55, 0.45);
+
+    box-shadow:
+        0 0 20px rgba(212, 175, 55, 0.08);
+}
+
+.pinned-label {
+    position: absolute;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 5;
+
+    padding: 6px 10px;
+
+    border-radius: 6px;
+
+    background: rgba(15, 23, 42, 0.9);
+
+    border: 1px solid rgba(212, 175, 55, 0.35);
+
+    color: #d4af37;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* =========================
+   15. EMPTY NEWS
+========================= */
+
+.no-news {
+    text-align: center;
+
+    padding: 80px 20px;
+
+    color: #64748b;
+}
+
+.no-news-icon {
+    font-size: 45px;
+
+    margin-bottom: 15px;
+
+    opacity: 0.7;
+}
+
+.no-news h3 {
+    color: #f8fafc;
+
+    font-size: 20px;
+
+    margin-bottom: 8px;
+}
+
+.no-news p {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   16. RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+
+    .news-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .container {
+        width: 90%;
+    }
+
+    .news-hero {
+        padding: 55px 0 45px;
+    }
+
+    .news-hero h1 {
+        font-size: 38px;
+    }
+
+    .news-hero p {
+        font-size: 15px;
+    }
+
+    .news-categories {
+        top: 80px;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-image {
+        height: 220px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .news-hero h1 {
+        font-size: 32px;
+    }
+
+    .news-section {
+        padding: 45px 0 60px;
+    }
+
+    .news-content {
+        padding: 18px;
+    }
+
+    .news-content h2 {
+        font-size: 17px;
+    }
+
+    .news-image {
+        height: 200px;
+    }
+
+}
