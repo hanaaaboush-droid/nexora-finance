@@ -1,18 +1,69 @@
 const express = require("express");
 const path = require("path");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// =========================
+// NEWS DATABASE
+// =========================
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
 // =========================
 // WEBSITE STATIC FILES
 // =========================
 app.use(express.static(__dirname));
+app.use(express.json({ limit: "10mb" }));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
+// =========================
+// NEWS TABLE
+// =========================
 
+async function createNewsTable() {
+    try {
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS news (
+                id SERIAL PRIMARY KEY,
+
+                title TEXT NOT NULL,
+
+                content TEXT NOT NULL,
+
+                category VARCHAR(50) NOT NULL,
+
+                is_breaking BOOLEAN DEFAULT FALSE,
+
+                is_pinned BOOLEAN DEFAULT FALSE,
+
+                delete_mode VARCHAR(20) DEFAULT 'manual',
+
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        console.log("News table is ready.");
+
+    } catch (error) {
+
+        console.error(
+            "NEWS DATABASE ERROR:",
+            error.message
+        );
+
+    }
+}
+
+createNewsTable();
 // =========================
 // API ENDPOINTS
 // =========================
@@ -124,7 +175,125 @@ app.get("/api/market", async (req, res) => {
         });
     }
 });
+// =========================
+// CREATE NEWS
+// =========================
 
+app.post("/api/news", async (req, res) => {
+
+    try {
+
+        const {
+            title,
+            content,
+            category,
+            isBreaking,
+            isPinned,
+            deleteMode
+        } = req.body;
+
+
+        if (!title || !content || !category) {
+
+            return res.status(400).json({
+                error: "Title, content and category are required."
+            });
+
+        }
+
+
+        const result = await pool.query(
+            `
+            INSERT INTO news
+            (
+                title,
+                content,
+                category,
+                is_breaking,
+                is_pinned,
+                delete_mode
+            )
+
+            VALUES ($1, $2, $3, $4, $5, $6)
+
+            RETURNING *
+            `,
+            [
+                title,
+                content,
+                category,
+                Boolean(isBreaking),
+                Boolean(isPinned),
+                deleteMode || "manual"
+            ]
+        );
+
+
+        res.status(201).json({
+            success: true,
+            news: result.rows[0]
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "CREATE NEWS ERROR:",
+            error.message
+        );
+
+        res.status(500).json({
+            error: "Failed to create news."
+        });
+
+    }
+
+});// =========================
+// GET NEWS
+// =========================
+
+app.get("/api/news", async (req, res) => {
+
+    try {
+
+        // حذف الأخبار التي انتهت مدتها
+        await pool.query(`
+            DELETE FROM news
+
+            WHERE delete_mode = '24h'
+
+            AND created_at <= NOW() - INTERVAL '24 hours'
+        `);
+
+
+        const result = await pool.query(`
+            SELECT *
+
+            FROM news
+
+            ORDER BY
+                is_pinned DESC,
+                created_at DESC
+        `);
+
+
+        res.json(result.rows);
+
+
+    } catch (error) {
+
+        console.error(
+            "GET NEWS ERROR:",
+            error.message
+        );
+
+        res.status(500).json({
+            error: "Failed to get news."
+        });
+
+    }
+
+});
 // =========================
 // START SERVER
 // =========================
