@@ -471,6 +471,333 @@
                 </div>
 
             </section>
+            <!-- =========================
+     ADD NEWS FORM
+========================= -->
+
+<section class="add-news-panel" id="addNewsPanel">
+
+    <div class="add-news-header">
+
+        <div>
+            <span class="admin-section-label">
+                CREATE NEWS
+            </span>
+
+            <h3>إضافة خبر جديد</h3>
+
+            <p>
+                أضيفي تفاصيل الخبر وحددي طريقة ظهوره في صفحة الأخبار.
+            </p>
+        </div>
+
+        <button class="close-news-form" id="closeNewsForm">
+            ✕
+        </button>
+
+    </div>
+
+
+    <form class="news-form">
+
+
+        <!-- TITLE -->
+
+        <div class="form-group">
+
+            <label for="newsTitle">
+                عنوان الخبر
+            </label>
+
+            <input
+                type="text"
+                id="newsTitle"
+                placeholder="اكتبي عنوان الخبر..."
+            >
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="form-group">
+
+            <label for="newsContent">
+                محتوى الخبر
+            </label>
+
+            <textarea
+                id="newsContent"
+                rows="7"
+                placeholder="اكتبي تفاصيل الخبر هنا..."
+            ></textarea>
+
+        </div>
+
+
+        <!-- IMAGE -->
+
+        <div class="form-group">
+
+            <label>
+                صورة الخبر
+            </label>
+
+            <div class="image-upload">
+
+                <div class="upload-icon">
+                    📷
+                </div>
+
+                <div class="upload-text">
+
+                    <strong>
+                        إضافة صورة
+                    </strong>
+
+                    <span>
+                        JPG أو PNG
+                    </span>
+
+                </div>
+
+                <input
+                    type="file"
+                    id="newsImage"
+                    accept="image/png, image/jpeg, image/webp"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="form-group">
+
+            <label>
+                تصنيف الخبر
+            </label>
+
+            <div class="category-options">
+
+
+                <label class="category-option">
+
+                    <input
+                        type="radio"
+                        name="category"
+                        value="breaking"
+                    >
+
+                    <span class="category-box breaking-option">
+                        🚨
+                        <strong>عاجل</strong>
+                    </span>
+
+                </label>
+
+
+                <label class="category-option">
+
+                    <input
+                        type="radio"
+                        name="category"
+                        value="economic"
+                    >
+
+                    <span class="category-box">
+                        💰
+                        <strong>اقتصادي</strong>
+                    </span>
+
+                </label>
+
+
+                <label class="category-option">
+
+                    <input
+                        type="radio"
+                        name="category"
+                        value="technology"
+                    >
+
+                    <span class="category-box">
+                        💻
+                        <strong>تقني</strong>
+                    </span>
+
+                </label>
+
+
+                <label class="category-option">
+
+                    <input
+                        type="radio"
+                        name="category"
+                        value="general"
+                    >
+
+                    <span class="category-box">
+                        📰
+                        <strong>عام</strong>
+                    </span>
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div class="form-group">
+
+            <label>
+                خيارات الخبر
+            </label>
+
+
+            <div class="news-options">
+
+
+                <label class="option-card">
+
+                    <input
+                        type="checkbox"
+                        id="breakingNews"
+                    >
+
+                    <div>
+
+                        <strong>
+                            🚨 خبر عاجل
+                        </strong>
+
+                        <span>
+                            يظهر الخبر بتصميم عاجل ولون أحمر
+                        </span>
+
+                    </div>
+
+                </label>
+
+
+                <label class="option-card">
+
+                    <input
+                        type="checkbox"
+                        id="pinnedNews"
+                    >
+
+                    <div>
+
+                        <strong>
+                            📌 تثبيت الخبر
+                        </strong>
+
+                        <span>
+                            يظهر الخبر في بداية قائمة الأخبار
+                        </span>
+
+                    </div>
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- DELETE OPTION -->
+
+        <div class="form-group">
+
+            <label>
+                مدة ظهور الخبر
+            </label>
+
+
+            <div class="delete-options">
+
+
+                <label class="delete-option">
+
+                    <input
+                        type="radio"
+                        name="deleteMode"
+                        value="24h"
+                    >
+
+                    <div>
+                        <strong>
+                            ⏱️ حذف تلقائي
+                        </strong>
+
+                        <span>
+                            حذف الخبر تلقائيًا بعد 24 ساعة
+                        </span>
+                    </div>
+
+                </label>
+
+
+                <label class="delete-option">
+
+                    <input
+                        type="radio"
+                        name="deleteMode"
+                        value="manual"
+                        checked
+                    >
+
+                    <div>
+                        <strong>
+                            🗑️ حذف يدوي
+                        </strong>
+
+                        <span>
+                            يبقى الخبر حتى يقوم المسؤول بحذفه
+                        </span>
+                    </div>
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                id="cancelNewsForm"
+            >
+                إلغاء
+            </button>
+
+            <button
+                type="submit"
+                class="publish-btn"
+            >
+                🚀 نشر الخبر
+            </button>
+
+        </div>
+
+
+    </form>
+
+</section>
 
         </main>
 
