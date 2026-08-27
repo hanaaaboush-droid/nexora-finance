@@ -96,12 +96,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 4. تحديث بطاقات الإحصائيات تلقائياً
-    const updateStats = (newsList) => {
-        if (totalNewsStat) totalNewsStat.textContent = newsList.length;
-        if (breakingNewsStat) breakingNewsStat.textContent = newsList.filter(n => n.category === 'breaking' || n.isBreaking).length;
-        if (pinnedNewsStat) pinnedNewsStat.textContent = newsList.filter(n => n.isPinned).length;
-    };
+   // تحديث الإحصائيات بناءً على مصفوفة الأخبار القادمة من الـ Server
+const updateStats = (newsList) => {
+    const totalElement = document.getElementById('statTotalNews');
+    const breakingElement = document.getElementById('statBreakingNews');
+    const pinnedElement = document.getElementById('statPinnedNews');
+    const todayElement = document.getElementById('statTodayNews');
 
+    if (!Array.isArray(newsList)) return;
+
+    // 1. إجمالي الأخبار
+    if (totalElement) totalElement.textContent = newsList.length;
+
+    // 2. الأخبار العاجلة
+    const breakingCount = newsList.filter(item => 
+        item.category === 'breaking' || item.isBreaking === true
+    ).length;
+    if (breakingElement) breakingElement.textContent = breakingCount;
+
+    // 3. الأخبار المثبتة
+    const pinnedCount = newsList.filter(item => item.isPinned === true).length;
+    if (pinnedElement) pinnedElement.textContent = pinnedCount;
+
+    // 4. الأخبار المنشورة اليوم
+    const today = new Date().toDateString();
+    const todayCount = newsList.filter(item => {
+        if (!item.createdAt) return false;
+        return new Date(item.createdAt).toDateString() === today;
+    }).length;
+    if (todayElement) todayElement.textContent = todayCount;
+};
     // 5. إرسال خبر جديد إلى الـ Backend
     if (newsForm) {
         newsForm.addEventListener('submit', async (e) => {
