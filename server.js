@@ -296,6 +296,49 @@ app.get("/api/news", async (req, res) => {
 
 });
 // =========================
+// DELETE NEWS
+// =========================
+
+app.delete("/api/news/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const result = await pool.query(
+            "DELETE FROM news WHERE id = $1 RETURNING *",
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                error: "الخبر غير موجود."
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "تم حذف الخبر بنجاح.",
+            news: result.rows[0]
+        });
+
+    } catch (error) {
+
+        console.error(
+            "DELETE NEWS ERROR:",
+            error.message
+        );
+
+        res.status(500).json({
+            error: "تعذر حذف الخبر."
+        });
+
+    }
+
+});
+// =========================
 // START SERVER
 // =========================
 app.listen(PORT, () => {
