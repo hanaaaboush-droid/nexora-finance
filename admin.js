@@ -1,131 +1,172 @@
-const openNewsForm = document.getElementById("openNewsForm");
-const closeNewsForm = document.getElementById("closeNewsForm");
-const cancelNewsForm = document.getElementById("cancelNewsForm");
-const addNewsPanel = document.getElementById("addNewsPanel");
+document.addEventListener('DOMContentLoaded', () => {
+    // URL الخاص بـ API الأخبار في خادامك
+    const API_URL = '/api/news'; 
 
+    // Visual Elements & Form Controls
+    const openBtn = document.getElementById('openNewsForm');
+    const closeBtn = document.getElementById('closeNewsForm');
+    const cancelBtn = document.getElementById('cancelNewsForm');
+    const addNewsPanel = document.getElementById('addNewsPanel');
+    const newsForm = document.querySelector('.news-form');
+    const newsTableBody = document.querySelector('.news-table tbody');
 
+    // Stats Elements
+    const totalNewsStat = document.querySelector('.stat-card:nth-child(1) strong');
+    const breakingNewsStat = document.querySelector('.stat-card:nth-child(2) strong');
+    const pinnedNewsStat = document.querySelector('.stat-card:nth-child(3) strong');
 
-openNewsForm.addEventListener("click", () => {
+    // 1. فتح وإغلاق النافذة الجانبية/النموذج
+    const togglePanel = (show) => {
+        if (show) {
+            addNewsPanel.classList.add('active');
+        } else {
+            addNewsPanel.classList.remove('active');
+            newsForm.reset();
+        }
+    };
 
-    addNewsPanel.classList.add("show");
+    if (openBtn) openBtn.addEventListener('click', () => togglePanel(true));
+    if (closeBtn) closeBtn.addEventListener('click', () => togglePanel(false));
+    if (cancelBtn) cancelBtn.addEventListener('click', () => togglePanel(false));
 
-    addNewsPanel.scrollIntoView({
-        behavior: "smooth"
-    });
+    // 2. جلب الأخبار من Server وتحديث الجدول والإحصائيات
+    const fetchNews = async () => {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            
+            if (data.success && Array.isArray(data.news)) {
+                renderTable(data.news);
+                updateStats(data.news);
+            }
+        } catch (err) {
+            console.error('خطأ في جلب الأخبار:', err);
+        }
+    };
 
-});
+    // 3. عرض الأخبار في الجدول
+    const renderTable = (newsList) => {
+        if (!newsTableBody) return;
+        newsTableBody.innerHTML = '';
 
+        newsList.forEach(item => {
+            const tr = document.createElement('tr');
+            
+            // تحديد أيقونة التصنيف
+            const categoryMap = {
+                breaking: { label: '🚨 عاجل', class: 'breaking' },
+                economic: { label: '💰 اقتصادي', class: 'economic' },
+                technology: { label: '💻 تقني', class: 'technology' },
+                general: { label: '📰 عام', class: 'general' }
+            };
 
-closeNewsForm.addEventListener("click", () => {
+            const catInfo = categoryMap[item.category] || categoryMap.general;
 
-    addNewsPanel.classList.remove("show");
+            tr.innerHTML = `
+                <td>
+                    <div class="admin-news-info">
+                        <div class="admin-news-image">
+                            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="news" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` : '📰'}
+                        </div>
+                        <div>
+                            <strong>${item.title}</strong>
+                            <span>${item.content ? item.content.substring(0, 35) + '...' : ''}</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="table-category ${catInfo.class}">${catInfo.label}</span>
+                </td>
+                <td>
+                    <span class="status published">منشور</span>
+                </td>
+                <td>${item.createdAt ? new Date(item.createdAt).toLocaleDateString('ar-SA') : 'الآن'}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="action-btn pin ${item.isPinned ? 'active' : ''}" data-id="${item._id || item.id}" title="تثبيت">📌</button>
+                        <button class="action-btn delete" data-id="${item._id || item.id}" title="حذف">🗑️</button>
+                    </div>
+                </td>
+            `;
 
-});
-
-
-cancelNewsForm.addEventListener("click", () => {
-
-    addNewsPanel.classList.remove("show");
-
-});
-const newsForm = document.querySelector(".news-form");
-
-newsForm.addEventListener("submit", async (event) => {
-
-    event.preventDefault();
-
-
-    const title =
-        document.getElementById("newsTitle").value.trim();
-
-    const content =
-        document.getElementById("newsContent").value.trim();
-
-    const category =
-        document.querySelector(
-            'input[name="category"]:checked'
-        )?.value;
-
-
-    const isBreaking =
-        document.getElementById("breakingNews").checked;
-
-    const isPinned =
-        document.getElementById("pinnedNews").checked;
-
-
-    const deleteMode =
-        document.querySelector(
-            'input[name="deleteMode"]:checked'
-        )?.value || "manual";
-
-
-    if (!title || !content || !category) {
-
-        alert("يرجى تعبئة عنوان الخبر ومحتواه واختيار التصنيف.");
-
-        return;
-    }
-
-
-    try {
-
-        const response = await fetch("/api/news", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                title,
-                content,
-                category,
-
-                isBreaking,
-                isPinned,
-
-                deleteMode
-
-            })
-
+            newsTableBody.appendChild(tr);
         });
 
+        attachActionListeners();
+    };
 
-        const data = await response.json();
+    // 4. تحديث بطاقات الإحصائيات تلقائياً
+    const updateStats = (newsList) => {
+        if (totalNewsStat) totalNewsStat.textContent = newsList.length;
+        if (breakingNewsStat) breakingNewsStat.textContent = newsList.filter(n => n.category === 'breaking' || n.isBreaking).length;
+        if (pinnedNewsStat) pinnedNewsStat.textContent = newsList.filter(n => n.isPinned).length;
+    };
 
+    // 5. إرسال خبر جديد إلى الـ Backend
+    if (newsForm) {
+        newsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        if (!response.ok) {
+            const title = document.getElementById('newsTitle').value.trim();
+            const content = document.getElementById('newsContent').value.trim();
+            const categoryInput = document.querySelector('input[name="category"]:checked');
+            const isBreaking = document.getElementById('breakingNews').checked;
+            const isPinned = document.getElementById('pinnedNews').checked;
+            const deleteModeInput = document.querySelector('input[name="deleteMode"]:checked');
 
-            throw new Error(
-                data.error || "حدث خطأ أثناء نشر الخبر"
-            );
+            if (!title || !content) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
 
-        }
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('category', categoryInput ? categoryInput.value : 'general');
+            formData.append('isBreaking', isBreaking);
+            formData.append('isPinned', isPinned);
+            formData.append('deleteMode', deleteModeInput ? deleteModeInput.value : 'manual');
 
+            const imageFile = document.getElementById('newsImage').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
 
-        alert("✅ تم نشر الخبر بنجاح!");
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData // إرسال بيانات Form مع الملفات
+                });
 
-
-        newsForm.reset();
-
-
-        document
-            .getElementById("addNewsPanel")
-            .classList.remove("show");
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "❌ لم يتم نشر الخبر: " +
-            error.message
-        );
-
+                if (response.ok) {
+                    togglePanel(false);
+                    fetchNews(); // إعادة تحميل الجدول فوراً
+                } else {
+                    alert('حدث خطأ أثناء إضافة الخبر');
+                }
+            } catch (err) {
+                console.error('خطأ في الاتصال:', err);
+            }
+        });
     }
 
+    // 6. أحداث زري الحذف والتثبيت داخل الجدول
+    const attachActionListeners = () => {
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.currentTarget.dataset.id;
+                if (confirm('هل أنت متأكد من حذف هذا الخبر؟')) {
+                    try {
+                        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                        fetchNews();
+                    } catch (err) {
+                        console.error('خطأ في الحذف:', err);
+                    }
+                }
+            });
+        });
+    };
+
+    // تحميل البيانات أول ما تفتح الصفحة
+    fetchNews();
 });
