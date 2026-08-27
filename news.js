@@ -1,9 +1,11 @@
-
 async function loadNews() {
 
     const newsGrid = document.querySelector(".news-grid");
 
-    if (!newsGrid) return;
+    if (!newsGrid) {
+        console.error("لم يتم العثور على .news-grid");
+        return;
+    }
 
     try {
 
@@ -15,7 +17,7 @@ async function loadNews() {
         );
 
         if (!response.ok) {
-            throw new Error("فشل جلب الأخبار");
+            throw new Error("فشل جلب الأخبار: " + response.status);
         }
 
         const newsList = await response.json();
@@ -24,7 +26,10 @@ async function loadNews() {
             throw new Error("بيانات الأخبار غير صحيحة");
         }
 
-        // لا توجد أخبار
+        // =========================
+        // NO NEWS
+        // =========================
+
         if (newsList.length === 0) {
 
             newsGrid.innerHTML = `
@@ -42,16 +47,17 @@ async function loadNews() {
             return;
         }
 
-        // عرض الأخبار القادمة من PostgreSQL
+        // =========================
+        // DISPLAY NEWS
+        // =========================
+
         newsGrid.innerHTML = newsList.map(news => {
 
             const isBreaking =
-                news.is_breaking === true ||
-                news.isBreaking === true;
+                news.is_breaking === true;
 
             const isPinned =
-                news.is_pinned === true ||
-                news.isPinned === true;
+                news.is_pinned === true;
 
             let cardClasses = "news-card";
 
@@ -68,14 +74,22 @@ async function loadNews() {
 
                     ${
                         isBreaking
-                            ? '<span class="breaking-label">🚨 عاجل</span>'
-                            : ''
+                            ? `
+                                <span class="breaking-label">
+                                    🚨 عاجل
+                                </span>
+                              `
+                            : ""
                     }
 
                     ${
                         isPinned
-                            ? '<span class="pinned-label">📌 مثبت</span>'
-                            : ''
+                            ? `
+                                <span class="pinned-label">
+                                    📌 مثبت
+                                </span>
+                              `
+                            : ""
                     }
 
                     <div class="news-content">
@@ -122,9 +136,13 @@ async function loadNews() {
         newsGrid.innerHTML = `
             <div class="no-news">
 
-                <div class="no-news-icon">⚠️</div>
+                <div class="no-news-icon">
+                    ⚠️
+                </div>
 
-                <h3>تعذر تحميل الأخبار</h3>
+                <h3>
+                    تعذر تحميل الأخبار
+                </h3>
 
                 <p>
                     حدث خطأ أثناء الاتصال بالخادم.
@@ -151,6 +169,7 @@ function getCategoryLabel(category) {
         technology: "💻 أخبار تقنية",
 
         general: "📰 أخبار عامة"
+
     };
 
     return categories[category] || "📰 أخبار عامة";
@@ -163,7 +182,9 @@ function getCategoryLabel(category) {
 
 function escapeHtml(text) {
 
-    if (!text) return "";
+    if (!text) {
+        return "";
+    }
 
     return String(text)
         .replace(/&/g, "&amp;")
@@ -178,13 +199,13 @@ function escapeHtml(text) {
 // DATE
 // =========================
 
-function formatDate(dateStr) {
+function formatDate(dateString) {
 
-    if (!dateStr) {
+    if (!dateString) {
         return "منذ دقائق";
     }
 
-    const date = new Date(dateStr);
+    const date = new Date(dateString);
 
     if (Number.isNaN(date.getTime())) {
         return "منذ دقائق";
@@ -211,41 +232,3 @@ document.addEventListener(
     "DOMContentLoaded",
     loadNews
 );
-```
-                            <span class="news-date">${formatDate(news.created_at || news.date)}</span>
-                        </div>
-                        <h2>${escapeHtml(news.title)}</h2>
-                        <p>${escapeHtml(news.content)}</p>
-                        <a href="#" class="read-more">اقرأ المزيد ←</a>
-                    </div>
-                </article>
-            `;
-        }).join('');
-
-    } catch (error) {
-        console.error("خطأ في جلب الأخبار:", error);
-    }
-}
-
-function getCategoryLabel(cat) {
-    const categories = {
-        breaking: "🚨 أخبار عاجلة",
-        economic: "💰 أخبار اقتصادية",
-        technology: "💻 أخبار تقنية",
-        general: "📰 أخبار عامة"
-    };
-    return categories[cat] || "📰 عام";
-}
-
-function escapeHtml(text) {
-    if (!text) return "";
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return "منذ دقائق";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("ar-SY", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-}
-
-document.addEventListener("DOMContentLoaded", loadNews);
