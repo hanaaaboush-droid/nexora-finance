@@ -1,4 +1,4 @@
-```javascript
+javascript
 document.addEventListener("DOMContentLoaded", () => {
 
     const API_URL = "/api/news";
