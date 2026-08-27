@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        addNewsPanel.classList.add("active");
+        addNewsPanel.classList.add("show");
 
     }
 
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!addNewsPanel) return;
 
-        addNewsPanel.classList.remove("active");
+        addNewsPanel.classList.remove("show");
 
         if (newsForm) {
             newsForm.reset();
