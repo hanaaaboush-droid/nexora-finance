@@ -1,785 +1,116 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>لوحة التحكم | Nixora</title>
-
-    <link rel="stylesheet" href="style.css">
+    <title>لوحة التحكم - إدارة الأخبار</title>
     <link rel="stylesheet" href="admin.css">
 </head>
-
 <body>
 
-    <!-- =========================
-         ADMIN NAVBAR
-    ========================== -->
-
-    <header class="admin-navbar">
-
-        <div class="admin-brand">
-
-            <div class="admin-logo">
-                N
+    <div class="admin-container">
+        <!-- قسم الإحصائيات -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <h3>إجمالي الأخبار</h3>
+                <p id="statTotalNews">0</p>
             </div>
-
-            <div>
-                <h1>Nixora</h1>
-                <span>ADMIN PANEL</span>
+            <div class="stat-card">
+                <h3>الأخبار العاجلة</h3>
+                <p id="statBreakingNews">0</p>
             </div>
-
+            <div class="stat-card">
+                <h3>الأخبار المثبتة</h3>
+                <p id="statPinnedNews">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>أخبار اليوم</h3>
+                <p id="statTodayNews">0</p>
+            </div>
         </div>
 
-
-        <div class="admin-user">
-
-            <div class="admin-avatar">
-                A
+        <!-- أدوات التصفية والبحث وإضافة خبر -->
+        <div class="news-controls">
+            <div class="news-search">
+                <span>🔍</span>
+                <input type="text" id="searchInput" placeholder="ابحث عن خبر بالعنوان أو المحتوى...">
             </div>
 
-            <div class="admin-user-info">
-                <strong>المسؤول</strong>
-                <span>مدير الأخبار</span>
+            <div class="news-filters">
+                <button class="filter active">الكل</button>
+                <button class="filter">🚨 عاجل</button>
+                <button class="filter">📌 مثبت</button>
+                <button class="filter">📰 عام</button>
+                <button class="filter">💰 اقتصادي</button>
             </div>
 
+            <button id="openNewsForm" class="btn btn-primary">➕ إضافة خبر جديد</button>
         </div>
 
-    </header>
-
-
-    <!-- =========================
-         ADMIN LAYOUT
-    ========================== -->
-
-    <div class="admin-layout">
-
-
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="admin-sidebar">
-
-            <nav class="admin-menu">
-
-                <a href="#" class="admin-menu-item active">
-                    <span>📰</span>
-                    الأخبار
-                </a>
-
-                <a href="#" class="admin-menu-item">
-                    <span>📊</span>
-                    الإحصائيات
-                </a>
-
-                <a href="#" class="admin-menu-item">
-                    <span>⚙️</span>
-                    الإعدادات
-                </a>
-
-            </nav>
-
-
-            <div class="admin-sidebar-bottom">
-
-                <a href="news.html" class="view-site">
-                    🌐 عرض الموقع
-                </a>
-
+        <!-- نافذة إضافة خبر -->
+        <div id="addNewsPanel" class="add-news-panel" style="display: none;">
+            <div class="panel-header">
+                <h2>إضافة خبر جديد</h2>
+                <button id="closeNewsForm" class="close-btn">&times;</button>
             </div>
-
-        </aside>
-
-
-        <!-- =========================
-             MAIN CONTENT
-        ========================== -->
-
-        <main class="admin-main">
-
-
-            <!-- PAGE HEADER -->
-
-            <section class="admin-page-header">
-
-                <div>
-
-                    <span class="admin-section-label">
-                        NEWS MANAGEMENT
-                    </span>
-
-                    <h2>
-                        إدارة الأخبار
-                    </h2>
-
-                    <p>
-                        إضافة وتعديل وإدارة أخبار Nixora
-                    </p>
-
+            
+            <form class="news-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="newsTitle">عنوان الخبر</label>
+                    <input type="text" id="newsTitle" required placeholder="أدخل عنوان الخبر">
                 </div>
 
-
-               <button class="add-news-btn" id="openNewsForm">
-    <span>＋</span>
-    إضافة خبر
-</button>
-
-            </section>
-
-<!-- =========================
-     STATISTICS
-========================== -->
-<section class="admin-stats">
-
-    <div class="stat-card">
-        <div class="stat-icon">📰</div>
-        <div>
-            <span>إجمالي الأخبار</span>
-            <strong id="statTotalNews">0</strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon breaking-icon">🚨</div>
-        <div>
-            <span>أخبار عاجلة</span>
-            <strong id="statBreakingNews">0</strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon pinned-icon">📌</div>
-        <div>
-            <span>أخبار مثبتة</span>
-            <strong id="statPinnedNews">0</strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">🕐</div>
-        <div>
-            <span>منشورة اليوم</span>
-            <strong id="statTodayNews">0</strong>
-        </div>
-    </div>
-
-</section>
-
-            <!-- =========================
-                 NEWS MANAGEMENT
-            ========================== -->
-
-            <section class="admin-news-section">
-
-
-                <!-- SECTION HEADER -->
-
-                <div class="admin-news-header">
-
-                    <div>
-
-                        <h3>
-                            الأخبار
-                        </h3>
-
-                        <span>
-                            آخر الأخبار المضافة
-                        </span>
-
-                    </div>
-
-
-                    <!-- SEARCH -->
-
-                    <div class="news-search">
-
-                        <span>🔍</span>
-
-                        <input
-                            type="text"
-                            placeholder="ابحث عن خبر..."
-                        >
-
-                    </div>
-
+                <div class="form-group">
+                    <label for="newsContent">محتوى الخبر</label>
+                    <textarea id="newsContent" rows="4" required placeholder="أدخل تفاصيل الخبر"></textarea>
                 </div>
 
-
-                <!-- =========================
-                     FILTERS
-                ========================== -->
-
-                <div class="news-filters">
-
-                    <button class="filter active">
-                        جميع الأخبار
-                    </button>
-
-                    <button class="filter">
-                        🚨 عاجل
-                    </button>
-
-                    <button class="filter">
-                        📌 مثبت
-                    </button>
-
-                    <button class="filter">
-                        📰 عام
-                    </button>
-
-                    <button class="filter">
-                        💰 اقتصادي
-                    </button>
-
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="category" value="general" checked> عام</label>
+                        <label><input type="radio" name="category" value="breaking"> عاجل</label>
+                        <label><input type="radio" name="category" value="economic"> اقتصادي</label>
+                        <label><input type="radio" name="category" value="technology"> تقني</label>
+                    </div>
                 </div>
 
-
-                <!-- =========================
-                     NEWS TABLE
-                ========================== -->
-
-                <div class="news-table-container">
-
-                    <table class="news-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    الخبر
-                                </th>
-
-                                <th>
-                                    التصنيف
-                                </th>
-
-                                <th>
-                                    الحالة
-                                </th>
-
-                                <th>
-                                    التاريخ
-                                </th>
-
-                                <th>
-                                    الإجراءات
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            <!-- NEWS ROW -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="admin-news-info">
-
-                                        <div class="admin-news-image">
-                                            📰
-                                        </div>
-
-                                        <div>
-
-                                            <strong>
-                                                هذا مثال على خبر عاجل
-                                            </strong>
-
-                                            <span>
-                                                خبر تجريبي في Nixora
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="table-category breaking">
-                                        🚨 عاجل
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="status published">
-                                        منشور
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-                                    منذ ساعتين
-                                </td>
-
-
-                                <td>
-
-                                    <div class="table-actions">
-
-                                        <button
-                                            class="action-btn edit"
-                                            title="تعديل">
-                                            ✏️
-                                        </button>
-
-                                        <button
-                                            class="action-btn pin"
-                                            title="تثبيت">
-                                            📌
-                                        </button>
-
-                                        <button
-                                            class="action-btn delete"
-                                            title="حذف">
-                                            🗑️
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                            <!-- NEWS ROW -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="admin-news-info">
-
-                                        <div class="admin-news-image">
-                                            💰
-                                        </div>
-
-                                        <div>
-
-                                            <strong>
-                                                ارتفاع أسعار الذهب اليوم
-                                            </strong>
-
-                                            <span>
-                                                تحديث جديد للأسواق
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="table-category economic">
-                                        💰 اقتصادي
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="status published">
-                                        منشور
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-                                    منذ 5 ساعات
-                                </td>
-
-
-                                <td>
-
-                                    <div class="table-actions">
-
-                                        <button
-                                            class="action-btn edit"
-                                            title="تعديل">
-                                            ✏️
-                                        </button>
-
-                                        <button
-                                            class="action-btn pin"
-                                            title="تثبيت">
-                                            📌
-                                        </button>
-
-                                        <button
-                                            class="action-btn delete"
-                                            title="حذف">
-                                            🗑️
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
-                    </table>
-
+                <div class="form-group">
+                    <label for="newsImage">صورة الخبر</label>
+                    <input type="file" id="newsImage" accept="image/*">
                 </div>
 
-            </section>
-            <!-- =========================
-     ADD NEWS FORM
-========================= -->
+                <div class="form-group checkboxes">
+                    <label><input type="checkbox" id="breakingNews"> خبر عاجل</label>
+                    <label><input type="checkbox" id="pinnedNews"> تثبيت الخبر في الأعلى</label>
+                </div>
 
-<section class="add-news-panel" id="addNewsPanel">
-
-    <div class="add-news-header">
-
-        <div>
-            <span class="admin-section-label">
-                CREATE NEWS
-            </span>
-
-            <h3>إضافة خبر جديد</h3>
-
-            <p>
-                أضيفي تفاصيل الخبر وحددي طريقة ظهوره في صفحة الأخبار.
-            </p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">حفظ ونشر</button>
+                    <button type="button" id="cancelNewsForm" class="btn btn-secondary">إلغاء</button>
+                </div>
+            </form>
         </div>
 
-        <button class="close-news-form" id="closeNewsForm">
-            ✕
-        </button>
-
+        <!-- جدول الأخبار -->
+        <div class="table-responsive">
+            <table class="news-table">
+                <thead>
+                    <tr>
+                        <th>الخبر</th>
+                        <th>التصنيف</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="newsTableBody">
+                    <!-- يتم تفريغ الجدول ليُبنى ديناميكيًا بواسطة JS -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
-    <form class="news-form">
-
-
-        <!-- TITLE -->
-
-        <div class="form-group">
-
-            <label for="newsTitle">
-                عنوان الخبر
-            </label>
-
-            <input
-                type="text"
-                id="newsTitle"
-                placeholder="اكتبي عنوان الخبر..."
-            >
-
-        </div>
-
-
-        <!-- CONTENT -->
-
-        <div class="form-group">
-
-            <label for="newsContent">
-                محتوى الخبر
-            </label>
-
-            <textarea
-                id="newsContent"
-                rows="7"
-                placeholder="اكتبي تفاصيل الخبر هنا..."
-            ></textarea>
-
-        </div>
-
-
-        <!-- IMAGE -->
-
-        <div class="form-group">
-
-            <label>
-                صورة الخبر
-            </label>
-
-            <div class="image-upload">
-
-                <div class="upload-icon">
-                    📷
-                </div>
-
-                <div class="upload-text">
-
-                    <strong>
-                        إضافة صورة
-                    </strong>
-
-                    <span>
-                        JPG أو PNG
-                    </span>
-
-                </div>
-
-                <input
-                    type="file"
-                    id="newsImage"
-                    accept="image/png, image/jpeg, image/webp"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- CATEGORY -->
-
-        <div class="form-group">
-
-            <label>
-                تصنيف الخبر
-            </label>
-
-            <div class="category-options">
-
-
-                <label class="category-option">
-
-                    <input
-                        type="radio"
-                        name="category"
-                        value="breaking"
-                    >
-
-                    <span class="category-box breaking-option">
-                        🚨
-                        <strong>عاجل</strong>
-                    </span>
-
-                </label>
-
-
-                <label class="category-option">
-
-                    <input
-                        type="radio"
-                        name="category"
-                        value="economic"
-                    >
-
-                    <span class="category-box">
-                        💰
-                        <strong>اقتصادي</strong>
-                    </span>
-
-                </label>
-
-
-                <label class="category-option">
-
-                    <input
-                        type="radio"
-                        name="category"
-                        value="technology"
-                    >
-
-                    <span class="category-box">
-                        💻
-                        <strong>تقني</strong>
-                    </span>
-
-                </label>
-
-
-                <label class="category-option">
-
-                    <input
-                        type="radio"
-                        name="category"
-                        value="general"
-                    >
-
-                    <span class="category-box">
-                        📰
-                        <strong>عام</strong>
-                    </span>
-
-                </label>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- OPTIONS -->
-
-        <div class="form-group">
-
-            <label>
-                خيارات الخبر
-            </label>
-
-
-            <div class="news-options">
-
-
-                <label class="option-card">
-
-                    <input
-                        type="checkbox"
-                        id="breakingNews"
-                    >
-
-                    <div>
-
-                        <strong>
-                            🚨 خبر عاجل
-                        </strong>
-
-                        <span>
-                            يظهر الخبر بتصميم عاجل ولون أحمر
-                        </span>
-
-                    </div>
-
-                </label>
-
-
-                <label class="option-card">
-
-                    <input
-                        type="checkbox"
-                        id="pinnedNews"
-                    >
-
-                    <div>
-
-                        <strong>
-                            📌 تثبيت الخبر
-                        </strong>
-
-                        <span>
-                            يظهر الخبر في بداية قائمة الأخبار
-                        </span>
-
-                    </div>
-
-                </label>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- DELETE OPTION -->
-
-        <div class="form-group">
-
-            <label>
-                مدة ظهور الخبر
-            </label>
-
-
-            <div class="delete-options">
-
-
-                <label class="delete-option">
-
-                    <input
-                        type="radio"
-                        name="deleteMode"
-                        value="24h"
-                    >
-
-                    <div>
-                        <strong>
-                            ⏱️ حذف تلقائي
-                        </strong>
-
-                        <span>
-                            حذف الخبر تلقائيًا بعد 24 ساعة
-                        </span>
-                    </div>
-
-                </label>
-
-
-                <label class="delete-option">
-
-                    <input
-                        type="radio"
-                        name="deleteMode"
-                        value="manual"
-                        checked
-                    >
-
-                    <div>
-                        <strong>
-                            🗑️ حذف يدوي
-                        </strong>
-
-                        <span>
-                            يبقى الخبر حتى يقوم المسؤول بحذفه
-                        </span>
-                    </div>
-
-                </label>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- BUTTONS -->
-
-        <div class="form-actions">
-
-            <button
-                type="button"
-                class="cancel-btn"
-                id="cancelNewsForm"
-            >
-                إلغاء
-            </button>
-
-            <button
-                type="submit"
-                class="publish-btn"
-            >
-                🚀 نشر الخبر
-            </button>
-
-        </div>
-
-
-    </form>
-
-</section>
-
-        </main>
-
-    </div>
-
 
     <script src="admin.js"></script>
-
 </body>
-
 </html>
