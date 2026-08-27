@@ -1,4 +1,4 @@
-javascript
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const API_URL = "/api/news";
@@ -565,5 +565,5 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchNews();
 
 });
-```
+
 
