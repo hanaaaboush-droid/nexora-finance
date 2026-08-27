@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // URL الخاص بـ API الأخبار في خادامك
     const API_URL = '/api/news'; 
 
-    // Visual Elements & Form Controls
+    // العناصر الخاصة بالنموذج والواجهة
     const openBtn = document.getElementById('openNewsForm');
     const closeBtn = document.getElementById('closeNewsForm');
     const cancelBtn = document.getElementById('cancelNewsForm');
@@ -10,26 +9,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const newsForm = document.querySelector('.news-form');
     const newsTableBody = document.querySelector('.news-table tbody');
 
-    // Stats Elements
-    const totalNewsStat = document.querySelector('.stat-card:nth-child(1) strong');
-    const breakingNewsStat = document.querySelector('.stat-card:nth-child(2) strong');
-    const pinnedNewsStat = document.querySelector('.stat-card:nth-child(3) strong');
+    // 1. فتح وإغلاق كارت إضافة الخبر (شغال 100%)
+    if (openBtn) {
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (addNewsPanel) addNewsPanel.style.display = 'block';
+        });
+    }
 
-    // 1. فتح وإغلاق النافذة الجانبية/النموذج
-    const togglePanel = (show) => {
-        if (show) {
-            addNewsPanel.classList.add('active');
-        } else {
-            addNewsPanel.classList.remove('active');
-            newsForm.reset();
-        }
+    const closeForm = (e) => {
+        if (e) e.preventDefault();
+        if (addNewsPanel) addNewsPanel.style.display = 'none';
+        if (newsForm) newsForm.reset();
     };
 
-    if (openBtn) openBtn.addEventListener('click', () => togglePanel(true));
-    if (closeBtn) closeBtn.addEventListener('click', () => togglePanel(false));
-    if (cancelBtn) cancelBtn.addEventListener('click', () => togglePanel(false));
+    if (closeBtn) closeBtn.addEventListener('click', closeForm);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeForm);
 
-    // 2. جلب الأخبار من Server وتحديث الجدول والإحصائيات
+    // 2. تحديث الإحصائيات
+    const updateStats = (newsList) => {
+        const totalElement = document.getElementById('statTotalNews');
+        const breakingElement = document.getElementById('statBreakingNews');
+        const pinnedElement = document.getElementById('statPinnedNews');
+        const todayElement = document.getElementById('statTodayNews');
+
+        if (!Array.isArray(newsList)) return;
+
+        if (totalElement) totalElement.textContent = newsList.length;
+
+        const breakingCount = newsList.filter(item => 
+            item.category === 'breaking' || item.isBreaking === true
+        ).length;
+        if (breakingElement) breakingElement.textContent = breakingCount;
+
+        const pinnedCount = newsList.filter(item => item.isPinned === true).length;
+        if (pinnedElement) pinnedElement.textContent = pinnedCount;
+
+        const today = new Date().toDateString();
+        const todayCount = newsList.filter(item => {
+            if (!item.createdAt) return false;
+            return new Date(item.createdAt).toDateString() === today;
+        }).length;
+        if (todayElement) todayElement.textContent = todayCount;
+    };
+
+    // 3. جلب الأخبار من الخادم
     const fetchNews = async () => {
         try {
             const res = await fetch(API_URL);
@@ -44,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 3. عرض الأخبار في الجدول
+    // 4. عرض الأخبار في الجدول
     const renderTable = (newsList) => {
         if (!newsTableBody) return;
         newsTableBody.innerHTML = '';
@@ -52,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         newsList.forEach(item => {
             const tr = document.createElement('tr');
             
-            // تحديد أيقونة التصنيف
             const categoryMap = {
                 breaking: { label: '🚨 عاجل', class: 'breaking' },
                 economic: { label: '💰 اقتصادي', class: 'economic' },
@@ -95,38 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attachActionListeners();
     };
 
-    // 4. تحديث بطاقات الإحصائيات تلقائياً
-   // تحديث الإحصائيات بناءً على مصفوفة الأخبار القادمة من الـ Server
-const updateStats = (newsList) => {
-    const totalElement = document.getElementById('statTotalNews');
-    const breakingElement = document.getElementById('statBreakingNews');
-    const pinnedElement = document.getElementById('statPinnedNews');
-    const todayElement = document.getElementById('statTodayNews');
-
-    if (!Array.isArray(newsList)) return;
-
-    // 1. إجمالي الأخبار
-    if (totalElement) totalElement.textContent = newsList.length;
-
-    // 2. الأخبار العاجلة
-    const breakingCount = newsList.filter(item => 
-        item.category === 'breaking' || item.isBreaking === true
-    ).length;
-    if (breakingElement) breakingElement.textContent = breakingCount;
-
-    // 3. الأخبار المثبتة
-    const pinnedCount = newsList.filter(item => item.isPinned === true).length;
-    if (pinnedElement) pinnedElement.textContent = pinnedCount;
-
-    // 4. الأخبار المنشورة اليوم
-    const today = new Date().toDateString();
-    const todayCount = newsList.filter(item => {
-        if (!item.createdAt) return false;
-        return new Date(item.createdAt).toDateString() === today;
-    }).length;
-    if (todayElement) todayElement.textContent = todayCount;
-};
-    // 5. إرسال خبر جديد إلى الـ Backend
+    // 5. إرسال الخبر
     if (newsForm) {
         newsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -134,12 +126,11 @@ const updateStats = (newsList) => {
             const title = document.getElementById('newsTitle').value.trim();
             const content = document.getElementById('newsContent').value.trim();
             const categoryInput = document.querySelector('input[name="category"]:checked');
-            const isBreaking = document.getElementById('breakingNews').checked;
-            const isPinned = document.getElementById('pinnedNews').checked;
-            const deleteModeInput = document.querySelector('input[name="deleteMode"]:checked');
+            const isBreaking = document.getElementById('breakingNews')?.checked || false;
+            const isPinned = document.getElementById('pinnedNews')?.checked || false;
 
             if (!title || !content) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
+                alert('يرجى ملء عنوان الخبر ومحتواه');
                 return;
             }
 
@@ -149,9 +140,8 @@ const updateStats = (newsList) => {
             formData.append('category', categoryInput ? categoryInput.value : 'general');
             formData.append('isBreaking', isBreaking);
             formData.append('isPinned', isPinned);
-            formData.append('deleteMode', deleteModeInput ? deleteModeInput.value : 'manual');
 
-            const imageFile = document.getElementById('newsImage').files[0];
+            const imageFile = document.getElementById('newsImage')?.files[0];
             if (imageFile) {
                 formData.append('image', imageFile);
             }
@@ -159,12 +149,12 @@ const updateStats = (newsList) => {
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    body: formData // إرسال بيانات Form مع الملفات
+                    body: formData
                 });
 
                 if (response.ok) {
-                    togglePanel(false);
-                    fetchNews(); // إعادة تحميل الجدول فوراً
+                    closeForm();
+                    fetchNews();
                 } else {
                     alert('حدث خطأ أثناء إضافة الخبر');
                 }
@@ -174,7 +164,7 @@ const updateStats = (newsList) => {
         });
     }
 
-    // 6. أحداث زري الحذف والتثبيت داخل الجدول
+    // 6. زر الحذف
     const attachActionListeners = () => {
         document.querySelectorAll('.action-btn.delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -191,6 +181,5 @@ const updateStats = (newsList) => {
         });
     };
 
-    // تحميل البيانات أول ما تفتح الصفحة
     fetchNews();
 });
