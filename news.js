@@ -1,4 +1,4 @@
-```javascript
+
 async function loadNews() {
 
     const newsGrid = document.querySelector(".news-grid");
