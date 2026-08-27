@@ -4,6 +4,7 @@ const cancelNewsForm = document.getElementById("cancelNewsForm");
 const addNewsPanel = document.getElementById("addNewsPanel");
 
 
+
 openNewsForm.addEventListener("click", () => {
 
     addNewsPanel.classList.add("show");
