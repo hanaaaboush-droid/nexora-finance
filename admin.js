@@ -1,5 +1,4 @@
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
     const API_URL = "/api/news";
 
@@ -22,55 +21,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================
-    // OPEN / CLOSE FORM
+    // OPEN / CLOSE PANEL
     // =========================
 
-    function togglePanel(show) {
+    function openNewsPanel() {
+
+        if (!addNewsPanel) {
+            alert("لم يتم العثور على لوحة إضافة الخبر.");
+            return;
+        }
+
+        addNewsPanel.classList.add("active");
+
+    }
+
+
+    function closeNewsPanel() {
 
         if (!addNewsPanel) return;
 
-        if (show) {
-            addNewsPanel.classList.add("active");
-        } else {
-            addNewsPanel.classList.remove("active");
+        addNewsPanel.classList.remove("active");
 
-            if (newsForm) {
-                newsForm.reset();
-            }
+        if (newsForm) {
+            newsForm.reset();
         }
+
     }
 
+
+    // زر إضافة خبر
     if (openBtn) {
-        openBtn.addEventListener("click", () => {
-            togglePanel(true);
+
+        openBtn.type = "button";
+
+        openBtn.addEventListener("click", function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            openNewsPanel();
+
         });
+
+    } else {
+
+        console.error("زر openNewsForm غير موجود.");
+
     }
 
+
+    // زر الإغلاق
     if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            togglePanel(false);
+
+        closeBtn.type = "button";
+
+        closeBtn.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            closeNewsPanel();
+
         });
+
     }
 
+
+    // زر الإلغاء
     if (cancelBtn) {
-        cancelBtn.addEventListener("click", () => {
-            togglePanel(false);
+
+        cancelBtn.type = "button";
+
+        cancelBtn.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            closeNewsPanel();
+
         });
+
     }
 
 
     // =========================
-    // FETCH NEWS
+    // LOAD NEWS
     // =========================
 
     async function fetchNews() {
 
         try {
 
-            const response = await fetch(API_URL + "?t=" + Date.now());
+            const response = await fetch(
+                API_URL + "?t=" + Date.now(),
+                {
+                    cache: "no-store"
+                }
+            );
 
             if (!response.ok) {
-                throw new Error("Failed to fetch news");
+                throw new Error(
+                    "Failed to fetch news: " + response.status
+                );
             }
 
             const newsList = await response.json();
@@ -84,9 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
 
-            console.error("خطأ في جلب الأخبار:", error);
+            console.error(
+                "خطأ في جلب الأخبار:",
+                error
+            );
 
             if (newsTableBody) {
+
                 newsTableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align:center;">
@@ -94,8 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
                     </tr>
                 `;
+
             }
+
         }
+
     }
 
 
@@ -108,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!newsTableBody) return;
 
         newsTableBody.innerHTML = "";
+
 
         if (newsList.length === 0) {
 
@@ -122,31 +180,33 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         const categoryMap = {
 
             breaking: {
                 label: "🚨 عاجل",
-                class: "breaking"
+                className: "breaking"
             },
 
             economic: {
                 label: "💰 اقتصادي",
-                class: "economic"
+                className: "economic"
             },
 
             technology: {
                 label: "💻 تقني",
-                class: "technology"
+                className: "technology"
             },
 
             general: {
                 label: "📰 عام",
-                class: "general"
+                className: "general"
             }
+
         };
 
 
-        newsList.forEach(item => {
+        newsList.forEach(function (item) {
 
             const tr = document.createElement("tr");
 
@@ -154,12 +214,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 categoryMap[item.category] ||
                 categoryMap.general;
 
-            const createdAt =
-                item.created_at
-                    ? new Date(item.created_at).toLocaleDateString("ar-SA")
-                    : "الآن";
 
-            const id = item.id;
+            const createdAt = item.created_at
+                ? new Date(item.created_at)
+                    .toLocaleDateString("ar-SA")
+                : "الآن";
+
 
             tr.innerHTML = `
 
@@ -194,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <td>
 
-                    <span class="table-category ${category.class}">
+                    <span class="table-category ${category.className}">
                         ${category.label}
                     </span>
 
@@ -220,15 +280,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="table-actions">
 
                         <button
-                            class="action-btn pin ${item.is_pinned ? "active" : ""}"
-                            data-id="${id}"
+                            type="button"
+                            class="action-btn pin"
+                            data-id="${item.id}"
                             title="تثبيت">
                             📌
                         </button>
 
                         <button
+                            type="button"
                             class="action-btn delete"
-                            data-id="${id}"
+                            data-id="${item.id}"
                             title="حذف">
                             🗑️
                         </button>
@@ -236,13 +298,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                 </td>
+
             `;
 
             newsTableBody.appendChild(tr);
 
         });
 
+
         attachActionListeners();
+
     }
 
 
@@ -254,19 +319,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const total = newsList.length;
 
-        const breaking = newsList.filter(news =>
-            news.category === "breaking" ||
-            news.is_breaking === true
-        ).length;
 
-        const pinned = newsList.filter(news =>
-            news.is_pinned === true
-        ).length;
+        const breaking = newsList.filter(function (news) {
+
+            return (
+                news.category === "breaking" ||
+                news.is_breaking === true
+            );
+
+        }).length;
+
+
+        const pinned = newsList.filter(function (news) {
+
+            return news.is_pinned === true;
+
+        }).length;
 
 
         const today = new Date();
 
-        const todayCount = newsList.filter(news => {
+
+        const todayCount = newsList.filter(function (news) {
 
             if (!news.created_at) return false;
 
@@ -296,6 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (todayNewsStat) {
             todayNewsStat.textContent = todayCount;
         }
+
     }
 
 
@@ -305,123 +380,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (newsForm) {
 
-        newsForm.addEventListener("submit", async (event) => {
+        newsForm.addEventListener(
+            "submit",
+            async function (event) {
 
-            event.preventDefault();
-
-            const title =
-                document.getElementById("newsTitle").value.trim();
-
-            const content =
-                document.getElementById("newsContent").value.trim();
-
-            const categoryInput =
-                document.querySelector(
-                    'input[name="category"]:checked'
-                );
-
-            const breakingInput =
-                document.getElementById("breakingNews");
-
-            const pinnedInput =
-                document.getElementById("pinnedNews");
-
-            const deleteModeInput =
-                document.querySelector(
-                    'input[name="deleteMode"]:checked'
-                );
+                event.preventDefault();
 
 
-            if (!title || !content) {
+                const titleElement =
+                    document.getElementById("newsTitle");
 
-                alert("يرجى كتابة عنوان ومحتوى الخبر.");
-
-                return;
-            }
-
-
-            const newsData = {
-
-                title: title,
-
-                content: content,
-
-                category:
-                    categoryInput
-                        ? categoryInput.value
-                        : "general",
-
-                isBreaking:
-                    breakingInput
-                        ? breakingInput.checked
-                        : false,
-
-                isPinned:
-                    pinnedInput
-                        ? pinnedInput.checked
-                        : false,
-
-                deleteMode:
-                    deleteModeInput
-                        ? deleteModeInput.value
-                        : "manual"
-            };
+                const contentElement =
+                    document.getElementById("newsContent");
 
 
-            try {
-
-                const response = await fetch(API_URL, {
-
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(newsData)
-
-                });
+                const title =
+                    titleElement
+                        ? titleElement.value.trim()
+                        : "";
 
 
-                const result = await response.json();
+                const content =
+                    contentElement
+                        ? contentElement.value.trim()
+                        : "";
 
 
-                if (!response.ok) {
+                const categoryElement =
+                    document.querySelector(
+                        'input[name="category"]:checked'
+                    );
 
-                    console.error("SERVER ERROR:", result);
+
+                const breakingElement =
+                    document.getElementById("breakingNews");
+
+
+                const pinnedElement =
+                    document.getElementById("pinnedNews");
+
+
+                const deleteModeElement =
+                    document.querySelector(
+                        'input[name="deleteMode"]:checked'
+                    );
+
+
+                if (!title || !content) {
 
                     alert(
-                        result.error ||
-                        "حدث خطأ أثناء إضافة الخبر."
+                        "يرجى كتابة عنوان ومحتوى الخبر."
                     );
 
                     return;
+
                 }
 
 
-                // نجاح الإضافة
+                const newsData = {
 
-                alert("تم إنشاء الخبر بنجاح 🎉");
+                    title: title,
 
-                togglePanel(false);
+                    content: content,
 
-                // إعادة تحميل الأخبار والعدادات
-                await fetchNews();
+                    category:
+                        categoryElement
+                            ? categoryElement.value
+                            : "general",
+
+                    isBreaking:
+                        breakingElement
+                            ? breakingElement.checked
+                            : false,
+
+                    isPinned:
+                        pinnedElement
+                            ? pinnedElement.checked
+                            : false,
+
+                    deleteMode:
+                        deleteModeElement
+                            ? deleteModeElement.value
+                            : "manual"
+
+                };
 
 
-            } catch (error) {
+                try {
 
-                console.error(
-                    "خطأ في الاتصال بالسيرفر:",
-                    error
-                );
+                    const response = await fetch(
+                        API_URL,
+                        {
+                            method: "POST",
 
-                alert(
-                    "تعذر الاتصال بالسيرفر. حاولي مرة أخرى."
-                );
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify(newsData)
+                        }
+                    );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        console.error(
+                            "SERVER ERROR:",
+                            result
+                        );
+
+                        alert(
+                            result.error ||
+                            "حدث خطأ أثناء إضافة الخبر."
+                        );
+
+                        return;
+                    }
+
+
+                    alert(
+                        "تم إنشاء الخبر بنجاح 🎉"
+                    );
+
+
+                    closeNewsPanel();
+
+
+                    await fetchNews();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "خطأ في إضافة الخبر:",
+                        error
+                    );
+
+                    alert(
+                        "تعذر الاتصال بالسيرفر."
+                    );
+
+                }
+
             }
+        );
 
-        });
+    } else {
+
+        console.error(
+            "لم يتم العثور على .news-form"
+        );
+
     }
 
 
@@ -431,113 +544,86 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function attachActionListeners() {
 
-        // DELETE
-
         document
             .querySelectorAll(".action-btn.delete")
-            .forEach(button => {
+            .forEach(function (button) {
 
-                button.addEventListener("click", async () => {
+                button.addEventListener(
+                    "click",
+                    async function () {
 
-                    const id = button.dataset.id;
+                        const id =
+                            button.dataset.id;
 
-                    if (!id) return;
-
-
-                    const confirmed = confirm(
-                        "هل أنتِ متأكدة من حذف هذا الخبر؟"
-                    );
-
-                    if (!confirmed) return;
+                        if (!id) return;
 
 
-                    try {
-
-                        const response = await fetch(
-                            `${API_URL}/${id}`,
-                            {
-                                method: "DELETE"
-                            }
-                        );
-
-
-                        if (!response.ok) {
-
-                            throw new Error(
-                                "فشل حذف الخبر"
-                            );
+                        if (
+                            !confirm(
+                                "هل أنتِ متأكدة من حذف هذا الخبر؟"
+                            )
+                        ) {
+                            return;
                         }
 
 
-                        await fetchNews();
+                        try {
+
+                            const response =
+                                await fetch(
+                                    `${API_URL}/${id}`,
+                                    {
+                                        method: "DELETE"
+                                    }
+                                );
 
 
-                    } catch (error) {
+                            if (!response.ok) {
+                                throw new Error(
+                                    "فشل حذف الخبر"
+                                );
+                            }
 
-                        console.error(
-                            "خطأ في الحذف:",
-                            error
-                        );
 
-                        alert(
-                            "تعذر حذف الخبر."
-                        );
+                            await fetchNews();
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "خطأ في الحذف:",
+                                error
+                            );
+
+                            alert(
+                                "تعذر حذف الخبر."
+                            );
+
+                        }
+
                     }
-
-                });
+                );
 
             });
 
-
-        // PIN
 
         document
             .querySelectorAll(".action-btn.pin")
-            .forEach(button => {
+            .forEach(function (button) {
 
-                button.addEventListener("click", async () => {
-
-                    const id = button.dataset.id;
-
-                    if (!id) return;
-
-
-                    try {
-
-                        const response = await fetch(
-                            `${API_URL}/${id}/pin`,
-                            {
-                                method: "PUT"
-                            }
-                        );
-
-
-                        if (!response.ok) {
-
-                            throw new Error(
-                                "فشل تثبيت الخبر"
-                            );
-                        }
-
-
-                        await fetchNews();
-
-
-                    } catch (error) {
-
-                        console.error(
-                            "خطأ في التثبيت:",
-                            error
-                        );
+                button.addEventListener(
+                    "click",
+                    function () {
 
                         alert(
-                            "ميزة التثبيت تحتاج إلى Endpoint في السيرفر."
+                            "التثبيت يحتاج إضافة Endpoint في server.js أولاً."
                         );
-                    }
 
-                });
+                    }
+                );
 
             });
+
     }
 
 
@@ -555,6 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+
     }
 
 
@@ -565,5 +652,4 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchNews();
 
 });
-
 
