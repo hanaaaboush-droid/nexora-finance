@@ -184,6 +184,65 @@ app.post("/api/auth/login", async (req, res) => {
         });
     }
 });
+// =========================
+// TEMPORARY ADMIN SETUP
+// =========================
+
+app.post("/api/auth/setup-admin", async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                error: "جميع الحقول مطلوبة."
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                error: "كلمة المرور يجب أن تكون 8 أحرف على الأقل."
+            });
+        }
+
+        const existingAdmin = await pool.query(
+            "SELECT id FROM users WHERE role = 'admin' LIMIT 1"
+        );
+
+        if (existingAdmin.rows.length > 0) {
+            return res.status(403).json({
+                error: "تم إنشاء حساب Admin مسبقًا."
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        const result = await pool.query(
+            `
+            INSERT INTO users
+            (name, email, password_hash, role)
+            VALUES ($1, $2, $3, 'admin')
+            RETURNING id, name, email, role
+            `,
+            [
+                name.trim(),
+                email.toLowerCase().trim(),
+                passwordHash
+            ]
+        );
+
+        res.status(201).json({
+            success: true,
+            user: result.rows[0]
+        });
+
+    } catch (error) {
+        console.error("SETUP ADMIN ERROR:", error.message);
+
+        res.status(500).json({
+            error: "تعذر إنشاء حساب المدير."
+        });
+    }
+});
 
 // معرفة المستخدم الحالي
 app.get("/api/auth/me", (req, res) => {
