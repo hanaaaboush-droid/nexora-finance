@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب Admin</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <main class="login-page">
+        <section class="login-card">
+            <h1>إنشاء حساب Admin</h1>
+            <p>هذه الصفحة مؤقتة لإنشاء أول مدير للموقع</p>
+
+            <form id="setupForm">
+                <label for="name">الاسم</label>
+                <input type="text" id="name" required>
+
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" required>
+
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" required minlength="8">
+
+                <button type="submit">إنشاء الحساب</button>
+
+                <p id="setupMessage"></p>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("setupForm");
+        const message = document.getElementById("setupMessage");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            message.textContent = "جاري إنشاء الحساب...";
+
+            const response = await fetch("/api/auth/setup-admin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: document.getElementById("name").value,
+                    email: document.getElementById("email").value,
+                    password: document.getElementById("password").value
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                message.textContent = data.error || "حدث خطأ.";
+                return;
+            }
+
+            message.textContent =
+                "تم إنشاء حساب المدير. يمكنك الآن تسجيل الدخول.";
+        });
+    </script>
+
+</body>
+</html>
