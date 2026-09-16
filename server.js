@@ -85,6 +85,7 @@ async function createUsersTable() {
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
+                username VARCHAR(50) UNIQUE NOT NULL,
                 email VARCHAR(150) UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
                 role VARCHAR(20) NOT NULL DEFAULT 'user',
@@ -97,6 +98,12 @@ async function createUsersTable() {
         console.error("USERS DATABASE ERROR:", error.message);
     }
 }
+pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS username VARCHAR(50)
+`).catch(error => {
+    console.error("USERNAME COLUMN ERROR:", error.message);
+});
 
 async function createNewsTable() {
     try {
@@ -188,6 +195,76 @@ req.session.save((error) => {
 
         res.status(500).json({
             error: "حدث خطأ أثناء تسجيل الدخول."
+        });
+    }
+});
+// =========================
+// USER REGISTRATION
+// =========================
+
+app.post("/api/auth/register", async (req, res) => {
+    try {
+        const { name, username, email, password } = req.body;
+
+        if (!name || !username || !email || !password) {
+            return res.status(400).json({
+                error: "جميع الحقول مطلوبة."
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                error: "كلمة المرور يجب أن تكون 8 أحرف على الأقل."
+            });
+        }
+
+        const cleanName = name.trim();
+        const cleanUsername = username.trim();
+        const cleanEmail = email.toLowerCase().trim();
+
+        const existingUser = await pool.query(
+            `
+            SELECT id
+            FROM users
+            WHERE email = $1
+            `,
+            [cleanEmail]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return res.status(409).json({
+                error: "هذا البريد الإلكتروني مستخدم مسبقًا."
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        const result = await pool.query(
+            `
+            INSERT INTO users
+            (name, username, email, password_hash, role)
+            VALUES ($1, $2, $3, $4, 'user')
+            RETURNING id, name, username, email, role
+            `,
+            [
+                cleanName,
+                cleanUsername,
+                cleanEmail,
+                hashedPassword
+            ]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "تم إنشاء الحساب بنجاح.",
+            user: result.rows[0]
+        });
+
+    } catch (error) {
+        console.error("REGISTER ERROR:", error.message);
+
+        res.status(500).json({
+            error: "حدث خطأ أثناء إنشاء الحساب."
         });
     }
 });
