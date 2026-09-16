@@ -165,18 +165,24 @@ app.post("/api/auth/login", async (req, res) => {
             });
         }
 
-        req.session.user = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        };
+     req.session.user = {
+    id: user.id,
+    email: user.email,
+    role: user.role
+};
 
-        res.json({
-            success: true,
-            message: "تم تسجيل الدخول بنجاح.",
-            user: req.session.user
+req.session.save((error) => {
+    if (error) {
+        console.error("Session save error:", error);
+        return res.status(500).json({
+            error: "تعذر حفظ جلسة تسجيل الدخول"
         });
+    }
+
+    res.json({
+        message: "تم تسجيل الدخول بنجاح"
+    });
+});
     } catch (error) {
         console.error("LOGIN ERROR:", error.message);
 
